@@ -1,7 +1,7 @@
 import numpy as np
 from fft import *
 
-def simple_spectrogram(X, fs, fft_size = 512, hop_size = 128):
+def spectrogram(X, fs, fft_size = 512, hop_size = 128):
     """
     Computes a simple spectrogram based on the core STFT logic.
     
