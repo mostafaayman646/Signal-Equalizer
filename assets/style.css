@@ -1,0 +1,568 @@
+/* ============================================================================
+   Signal Equalizer Pro - Main Stylesheet
+   Dark theme matching the provided design mockups
+   ============================================================================ */
+
+:root {
+    --primary-bg: #1a1d2e;
+    --secondary-bg: #252837;
+    --sidebar-bg: #1e2230;
+    --accent-cyan: #00d9ff;
+    --accent-blue: #4a9eff;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a4b8;
+    --border-color: #2d3142;
+    --graph-bg: #161821;
+}
+
+* {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--primary-bg);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+}
+
+.app-container {
+    background-color: var(--primary-bg);
+    min-height: 100vh;
+}
+
+/* ============================================================================
+   Navigation Bar
+   ============================================================================ */
+
+.navbar {
+    background-color: var(--secondary-bg) !important;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+}
+
+.navbar-brand {
+    font-size: 1.3rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+.brand-pro {
+    color: var(--accent-cyan);
+    font-weight: 700;
+}
+
+/* ============================================================================
+   Sidebar
+   ============================================================================ */
+
+.sidebar {
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    padding: 1.5rem 1rem;
+    min-height: calc(100vh - 70px);
+    position: sticky;
+    top: 0;
+}
+
+.sidebar-heading {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    margin-bottom: 1rem;
+}
+
+.sidebar-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-section:last-child {
+    border-bottom: none;
+}
+
+.mode-dropdown {
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 8px;
+}
+
+.upload-box {
+    background-color: var(--secondary-bg);
+    border: 2px dashed var(--accent-cyan);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-box:hover {
+    background-color: rgba(0, 217, 255, 0.1);
+    border-color: var(--accent-blue);
+}
+
+.equalizer-icon-container {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem auto;
+}
+
+.sidebar-subheading {
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.audio-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.audio-button {
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--accent-cyan);
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.audio-button:hover {
+    background-color: var(--accent-cyan);
+    color: var(--primary-bg);
+}
+
+.settings-button {
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.settings-button:hover {
+    background-color: var(--accent-cyan);
+    color: var(--primary-bg);
+    border-color: var(--accent-cyan);
+}
+
+.spectrogram-switch {
+    margin-top: 0.5rem;
+}
+
+.spectrogram-switch label {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+/* ============================================================================
+   Main Content Area
+   ============================================================================ */
+
+.main-content {
+    padding: 2rem;
+    background-color: var(--primary-bg);
+}
+
+.section-heading {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+/* ============================================================================
+   Time Domain Viewers
+   ============================================================================ */
+
+.time-domain-section {
+    margin-bottom: 2rem;
+}
+
+.graph-row {
+    margin-bottom: 1.5rem;
+}
+
+.signal-graph {
+    background-color: var(--graph-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    height: 200px;
+}
+
+.spectrogram-mini {
+    background-color: var(--graph-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    height: 200px;
+}
+
+/* ============================================================================
+   Playback Controls
+   ============================================================================ */
+
+.controls-section {
+    background-color: var(--secondary-bg);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.playback-controls {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.playback-controls .btn {
+    background-color: var(--graph-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.playback-controls .btn:hover {
+    background-color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+    color: var(--primary-bg);
+}
+
+.playback-controls .btn-primary {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+.playback-controls .btn-primary:hover {
+    background-color: var(--accent-cyan);
+}
+
+.global-controls-dropdown button {
+    background-color: var(--graph-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.speed-control {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.speed-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.speed-slider {
+    flex: 1;
+    max-width: 300px;
+}
+
+.speed-slider .rc-slider-track {
+    background-color: var(--accent-cyan);
+}
+
+.speed-slider .rc-slider-handle {
+    border-color: var(--accent-cyan);
+    background-color: var(--accent-cyan);
+}
+
+/* ============================================================================
+   Frequency Domain
+   ============================================================================ */
+
+.frequency-domain-section {
+    margin-bottom: 2rem;
+}
+
+.frequency-graph {
+    background-color: var(--graph-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    height: 300px;
+}
+
+.scale-selector {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.scale-selector .btn {
+    background-color: var(--graph-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    padding: 0.4rem 1rem;
+}
+
+.scale-selector .btn.active {
+    background-color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+    color: var(--primary-bg);
+}
+
+/* ============================================================================
+   Equalizer Sliders
+   ============================================================================ */
+
+.equalizer-section {
+    background-color: var(--secondary-bg);
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.sliders-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.equalizer-slider {
+    height: 150px;
+}
+
+.equalizer-slider .rc-slider-track {
+    background: linear-gradient(to top, var(--accent-cyan), var(--accent-blue));
+    width: 4px;
+}
+
+.equalizer-slider .rc-slider-rail {
+    background-color: var(--border-color);
+    width: 4px;
+}
+
+.equalizer-slider .rc-slider-handle {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--accent-cyan);
+    background-color: var(--primary-bg);
+    margin-left: -10px;
+}
+
+.equalizer-slider .rc-slider-handle:hover,
+.equalizer-slider .rc-slider-handle:active {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+.slider-icon {
+    font-size: 2rem;
+    color: var(--accent-cyan);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--graph-bg);
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+}
+
+.slider-icon-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.slider-label {
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* ============================================================================
+   Generic Mode Specific
+   ============================================================================ */
+
+.generic-mode-section {
+    background-color: var(--secondary-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-top: 2rem;
+}
+
+.subdivision-configs .card {
+    background-color: var(--graph-bg);
+    border-color: var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.subdivision-configs .form-control {
+    background-color: var(--primary-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.subdivision-configs .form-control:focus {
+    background-color: var(--primary-bg);
+    border-color: var(--accent-cyan);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 217, 255, 0.25);
+}
+
+/* ============================================================================
+   Voice Mode Specific
+   ============================================================================ */
+
+.voice-filters {
+    background-color: var(--secondary-bg);
+    border-color: var(--border-color) !important;
+}
+
+.voice-filters label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.voice-filters .form-check-label {
+    color: var(--text-primary);
+    font-weight: 400;
+}
+
+.voice-filters .form-check-input:checked {
+    background-color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+}
+
+/* ============================================================================
+   Plotly Graph Customization
+   ============================================================================ */
+
+.js-plotly-plot .plotly .modebar {
+    background-color: var(--secondary-bg) !important;
+}
+
+.js-plotly-plot .plotly .modebar-btn {
+    color: var(--text-primary) !important;
+}
+
+.js-plotly-plot .plotly .modebar-btn:hover {
+    background-color: var(--accent-cyan) !important;
+}
+
+/* ============================================================================
+   Scrollbar Styling
+   ============================================================================ */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--secondary-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-cyan);
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+
+@media (max-width: 1200px) {
+    .sliders-row {
+        gap: 1rem;
+    }
+
+    .slider-container {
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: relative;
+        width: 100% !important;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+    .sliders-row {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .playback-controls {
+        justify-content: center;
+    }
+}
+
+/* ============================================================================
+   Animations
+   ============================================================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slider-container,
+.graph-row,
+.frequency-graph {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* ============================================================================
+   Utility Classes
+   ============================================================================ */
+
+.text-cyan {
+    color: var(--accent-cyan);
+}
+
+.bg-dark-secondary {
+    background-color: var(--secondary-bg);
+}
+
+.border-dark {
+    border-color: var(--border-color) !important;
+}
