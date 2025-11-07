@@ -1,7 +1,7 @@
 import numpy as np
 from fft import *
 
-def simple_spectrogram(X, fs, fft_size, hop_size):
+def simple_spectrogram(X, fs, fft_size = 512, hop_size = 128):
     """
     Computes a simple spectrogram based on the core STFT logic.
     
@@ -15,6 +15,12 @@ def simple_spectrogram(X, fs, fft_size, hop_size):
         f (np.array): Array of frequency bins (y-axis).
         t (np.array): Array of time bins (x-axis).
         Sxx (np.array): The 2D spectrogram matrix (amplitude is power).
+    
+    Examples:
+    ---------
+    >>> f, t, Sxx = simple_spectrogram(signal,sample_rate)
+    
+    >>> f, t, Sxx = simple_spectrogram(signal,sample_rate,fft_size = 2048,hop_size = 512)
     """
     
     # 1. Get the total length of the signal
