@@ -1,53 +1,13 @@
-from components.base_template import create_base_layout
+"""
+Musical Instruments Mode Layout
+Uses JSON configuration file for frequency mappings
+"""
 
-# Define slider configurations for musical instruments
-slider_configs = [
-    {
-        'id': 'slider-guitar',
-        'label': 'Guitar',
-        'icon': 'fas fa-guitar',
-        'min': 0,
-        'max': 2,
-        'value': 1,
-        'step': 0.1
-    },
-    {
-        'id': 'slider-piano',
-        'label': 'Piano',
-        'icon': 'fas fa-piano',
-        'min': 0,
-        'max': 2,
-        'value': 1,
-        'step': 0.1
-    },
-    {
-        'id': 'slider-drums',
-        'label': 'Drums',
-        'icon': 'fas fa-drum',
-        'min': 0,
-        'max': 2,
-        'value': 1,
-        'step': 0.1
-    },
-    {
-        'id': 'slider-violin',
-        'label': 'Violin',
-        'icon': 'fas fa-music',
-        'min': 0,
-        'max': 2,
-        'value': 1,
-        'step': 0.1
-    },
-    {
-        'id': 'slider-flute',
-        'label': 'Flute',
-        'icon': 'fas fa-music',
-        'min': 0,
-        'max': 2,
-        'value': 1,
-        'step': 0.1
-    },
-]
+from components.base_template import create_base_layout
+from modes.customized.frequency_map_loader import get_slider_configs
+
+# Get slider configurations from JSON file
+slider_configs = get_slider_configs('instruments')
 
 # Create layout using base template
 layout = create_base_layout(

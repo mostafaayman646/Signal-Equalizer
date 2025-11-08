@@ -1,3 +1,8 @@
+"""
+Base Template for Signal Equalizer UI
+This module provides the core layout structure used across all modes.
+Each mode can call these functions and customize as needed.
+"""
 
 from dash import html, dcc
 import dash_bootstrap_components as dbc
@@ -80,24 +85,14 @@ def create_sidebar(mode_name="Music and Animals", show_spectrogram=True):
             ], id='play-after', className="audio-button"),
         ], className="sidebar-section"),
 
-        # Settings Save/Load Section
+        # Download Processed Audio Section
         html.Div([
             html.Button([
-                html.I(className="fas fa-save"),
-                " Save Settings"
-            ], id='save-settings-btn', className="settings-button"),
+                html.I(className="fas fa-download"),
+                " Download Audio"
+            ], id='download-audio-btn', className="settings-button"),
 
-            html.Button([
-                html.I(className="fas fa-folder-open"),
-                " Load Settings"
-            ], id='load-settings-btn', className="settings-button mt-2"),
-
-            dcc.Download(id="download-settings"),
-            dcc.Upload(
-                id='upload-settings',
-                children=html.Div([]),
-                style={'display': 'none'}
-            ),
+            dcc.Download(id="download-processed-audio"),
         ], className="sidebar-section"),
 
     ], width=2, className="sidebar", id='sidebar')
