@@ -36,7 +36,7 @@ def spectrogram(X, fs, fft_size = 512, hop_size = 128):
     
     # 4. Calculate fft for all signal
     
-    fft_result = process_signal(X.tolist(),fs)
+    fft_result = time_to_frequency_linear(X.tolist(),fs)
     
     # 4. Loop through the signal in overlapping-windowed "hops"
     # We start at index 0
@@ -49,7 +49,7 @@ def spectrogram(X, fs, fft_size = 512, hop_size = 128):
         windowed_frame = frame * window
         
         # --- Step C: Compute the FFT ---
-        fft_data = process_signal(windowed_frame.tolist(), fs)
+        fft_data = time_to_frequency_linear(windowed_frame.tolist(), fs)
         
         # --- Step D: Get the power (magnitude squared) ---
         # The FFT result is complex. We just want its magnitude (amplitude).
