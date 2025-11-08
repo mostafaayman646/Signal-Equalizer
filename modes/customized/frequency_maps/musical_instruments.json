@@ -1,0 +1,76 @@
+{
+  "mode": "musical_instruments",
+  "description": "Frequency ranges for common musical instruments",
+  "sources": [
+    {
+      "id": "slider-guitar",
+      "label": "Guitar",
+      "icon": "fas fa-guitar",
+      "frequency_ranges": [
+        [82, 1200],
+        [2000, 4000]
+      ],
+      "description": "Fundamental range (E2-D6) + brightness harmonics",
+      "default_value": 1.0,
+      "min": 0,
+      "max": 2,
+      "step": 0.1
+    },
+    {
+      "id": "slider-piano",
+      "label": "Piano",
+      "icon": "fas fa-piano",
+      "frequency_ranges": [
+        [27, 4186]
+      ],
+      "description": "Full piano range (A0-C8)",
+      "default_value": 1.0,
+      "min": 0,
+      "max": 2,
+      "step": 0.1
+    },
+    {
+      "id": "slider-drums",
+      "label": "Drums",
+      "icon": "fas fa-drum",
+      "frequency_ranges": [
+        [40, 150],
+        [200, 500],
+        [5000, 10000]
+      ],
+      "description": "Kick + snare + cymbals",
+      "default_value": 1.0,
+      "min": 0,
+      "max": 2,
+      "step": 0.1
+    },
+    {
+      "id": "slider-violin",
+      "label": "Violin",
+      "icon": "fas fa-music",
+      "frequency_ranges": [
+        [196, 3136],
+        [4000, 8000]
+      ],
+      "description": "G3-G7 + upper harmonics",
+      "default_value": 1.0,
+      "min": 0,
+      "max": 2,
+      "step": 0.1
+    },
+    {
+      "id": "slider-bass",
+      "label": "Bass",
+      "icon": "fas fa-music",
+      "frequency_ranges": [
+        [41, 350],
+        [500, 1000]
+      ],
+      "description": "E1-F4 + some harmonics",
+      "default_value": 1.0,
+      "min": 0,
+      "max": 2,
+      "step": 0.1
+    }
+  ]
+}
