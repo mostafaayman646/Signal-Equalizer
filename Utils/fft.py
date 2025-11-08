@@ -1,20 +1,10 @@
-"""
-FFT Utility - Quick Start:
-Import:
-    from fft import process_signal
-Usage:
-    result = process_signal(signal_array, sampling_rate)
-Returns dict with keys:
-    'frequencies' - frequency bins (Hz)
-    'magnitude' - amplitude spectrum for plotting
-    'full_fft' - complex FFT data for further processing
-Example:
-    result = process_signal(audio_data, 44100)
-    freq_axis = result['frequencies']
-    magnitude = result['magnitude']
-"""
+# How to use fft (linear and audiogram scale) and ifft
+# To use the linear fft function simply call time_to_frequency_linear and pass the signal as a list with its sampling rate.
+# To use the audiogram fft function ,call time_to_frequency_audiogram and pass the signal as a list with its sampling rate.
+# to use ifft call frequency_to_time function and pass the signal as a list with its sampling rate.
+# the result should be dictionaries with magnitudes, frequencies that can be plotted
 
-from math import ceil, sqrt, tau
+from math import ceil, sqrt, tau, log10
 from functools import cache
 from typing import List, Union
 import cmath
@@ -62,8 +52,7 @@ def fft(A: List[complex]) -> List[complex]:
             )
     return X
 
-# Inverse FFT (may be needed later, not tested yet)
-
+# Helper function for ifft
 def ifft(X: List[complex]) -> List[complex]:
     """Compute the inverse FFT using conjugate trick."""
     N = len(X)
@@ -71,15 +60,8 @@ def ifft(X: List[complex]) -> List[complex]:
     y = fft(conjX)
     return [x.conjugate() / N for x in y]
 
-# Main function that controls the flow
-def process_signal(signal: List[float], sampling_rate: float):
-    """
-    Takes a time-domain signal and a sampling rate, computes the FFT,
-    and returns a dictionary with:
-      - frequencies: frequency bins (x-axis) in Hz (linear scale)
-      - magnitude: magnitude spectrum (amplitude for plotting)
-      - full_fft: the complete FFT output (for later reconstruction)
-    """
+# Main functions that controls the flow
+def time_to_frequency_linear(signal: List[float], sampling_rate: float):
     # Convert the real signal to a list of complex numbers
     signal_complex = [complex(x, 0) for x in signal]
 
@@ -98,4 +80,35 @@ def process_signal(signal: List[float], sampling_rate: float):
         'frequencies': frequencies,  # x-axis: Frequency bins (Hz)
         'magnitude': magnitude,      # y-axis: Amplitude spectrum for plotting
         'full_fft': fft_result       # Full FFT for equalization and reconstruction
+    }
+
+
+def frequency_to_time(fft_result: List[complex]) -> List[float]:
+
+    time_domain = ifft(fft_result)
+    return [x.real for x in time_domain]
+
+
+def time_to_frequency_audiogram(signal: List[float], sampling_rate: float):
+
+    # Get regular linear FFT
+    fft_data = time_to_frequency_linear(signal, sampling_rate)
+    
+    frequencies = fft_data['frequencies']
+    magnitude = fft_data['magnitude']
+    
+    # Convert magnitude to dB scale (common for audiograms)
+    magnitude_db = []
+    for mag in magnitude:
+        if mag > 1e-10:
+            db = 20 * log10(mag)
+        else:
+            db = -120  # Floor value
+        magnitude_db.append(db)
+    
+    return {
+        'frequencies': frequencies,      # Same frequencies, but plot with log scale
+        'magnitude': magnitude,          # Linear magnitude
+        'magnitude_db': magnitude_db,    # dB magnitude (typical for audiograms)
+        'full_fft': fft_data['full_fft']
     }
