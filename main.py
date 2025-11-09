@@ -7,7 +7,7 @@ from dash import html, dcc, Input, Output, State
 import dash_bootstrap_components as dbc
 
 # Import components and callbacks
-from components.layout_builder import create_app_layout
+from components.layout_builder import create_app_layout, cine_viewer
 from components.main_callbacks import register_main_callbacks
 from modes.customized.callbacks import register_customized_callbacks
 # from modes.generic.callbacks import register_generic_callbacks
@@ -28,6 +28,7 @@ server = app.server
 app.layout = create_app_layout()
 
 # Register callbacks
+cine_viewer.register_callbacks(app)
 register_main_callbacks(app)
 register_customized_callbacks(app)  # For instruments, animals, voices
 # register_generic_callbacks(app)      # For generic mode

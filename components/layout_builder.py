@@ -8,6 +8,8 @@ import dash_bootstrap_components as dbc
 import json
 import os
 
+from Utils.cine_viewers import CineViewer
+cine_viewer = CineViewer(namespace="cine")
 
 def load_mode_config(mode):
     """Load slider configs for a mode from JSON"""
@@ -92,17 +94,22 @@ def create_content_layout():
         create_control_deck(),
 
         # Row 2: Time Domain Graphs
-        html.Div([
-            html.H5("TIME DOMAIN", className="section-heading"),
-            dcc.Graph(
-                id='time-domain-pre', config={'displayModeBar': False},
-                style={'height': '200px', 'backgroundColor': '#161821', 'borderRadius': '8px', 'marginBottom': '1rem'}
-            ),
-            dcc.Graph(
-                id='time-domain-post', config={'displayModeBar': False},
-                style={'height': '200px', 'backgroundColor': '#161821', 'borderRadius': '8px'}
-            )
-        ], className="app-card"),
+        # html.Div([
+        #     html.H5("TIME DOMAIN", className="section-heading"),
+        #     dcc.Graph(
+        #         id='time-domain-pre', config={'displayModeBar': False},
+        #         style={'height': '200px', 'backgroundColor': '#161821', 'borderRadius': '8px', 'marginBottom': '1rem'}
+        #     ),
+        #     dcc.Graph(
+        #         id='time-domain-post', config={'displayModeBar': False},
+        #         style={'height': '200px', 'backgroundColor': '#161821', 'borderRadius': '8px'}
+        #     )
+        # ], className="app-card"),
+
+        html.Div(
+            cine_viewer.layout(),
+            className="app-card"
+        ),
 
         # Row 3: Spectrograms Section
         html.Div([
