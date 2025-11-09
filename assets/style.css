@@ -6,7 +6,7 @@
 :root {
     --primary-bg: #1a1d2e;
     --secondary-bg: #252837;
-    --sidebar-bg: #1e2230;
+    --sidebar-bg: #1e2230; /* Re-using for card backgrounds */
     --accent-cyan: #00d9ff;
     --accent-blue: #4a9eff;
     --text-primary: #ffffff;
@@ -39,6 +39,9 @@ body {
     background-color: var(--secondary-bg) !important;
     border-bottom: 1px solid var(--border-color);
     padding: 1rem 2rem;
+    position: sticky; /* Make navbar sticky */
+    top: 0;
+    z-index: 1020;
 }
 
 .navbar-brand {
@@ -53,17 +56,32 @@ body {
 }
 
 /* ============================================================================
-   Sidebar
+   Sidebar (REMOVED) & Main Content (MODIFIED)
    ============================================================================ */
 
-.sidebar {
-    background-color: var(--sidebar-bg);
-    border-right: 1px solid var(--border-color);
-    padding: 1.5rem 1rem;
-    min-height: calc(100vh - 70px);
-    position: sticky;
-    top: 0;
+/* REMOVED .sidebar and .main-content rules */
+
+.main-app-content {
+    padding: 1.5rem;
 }
+
+/* NEW CARD STYLE
+   This is the "floating rounded border" block style you requested.
+*/
+.app-card {
+    background-color: var(--secondary-bg); /* Use secondary background */
+    border: 1px solid var(--border-color);
+    border-radius: 12px; /* Softer radius */
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    /* This creates the "floating" effect */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* ============================================================================
+   Sidebar-related components (now in Control Deck)
+   ============================================================================ */
 
 .sidebar-heading {
     color: var(--text-secondary);
@@ -71,95 +89,24 @@ body {
     font-weight: 600;
     letter-spacing: 1.5px;
     margin-bottom: 1rem;
-}
-
-.sidebar-section {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.sidebar-section:last-child {
-    border-bottom: none;
-}
-
-.mode-dropdown {
-    background-color: var(--secondary-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    border-radius: 8px;
+    text-transform: uppercase;
 }
 
 .upload-box {
-    background-color: var(--secondary-bg);
-    border: 2px dashed var(--accent-cyan);
+    background-color: var(--graph-bg); /* Darker background */
+    border: 2px dashed var(--border-color); /* More subtle border */
     border-radius: 8px;
     padding: 1.5rem;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
+    color: var(--text-secondary);
 }
 
 .upload-box:hover {
-    background-color: rgba(0, 217, 255, 0.1);
-    border-color: var(--accent-blue);
-}
-
-.equalizer-icon-container {
-    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 2rem auto;
-}
-
-.sidebar-subheading {
-    color: var(--text-secondary);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-}
-
-.audio-label {
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.audio-button {
     background-color: var(--secondary-bg);
-    border: 1px solid var(--border-color);
-    color: var(--accent-cyan);
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-}
-
-.audio-button:hover {
-    background-color: var(--accent-cyan);
-    color: var(--primary-bg);
-}
-
-.settings-button {
-    background-color: var(--secondary-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    width: 100%;
-    padding: 0.6rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    transition: all 0.3s ease;
-}
-
-.settings-button:hover {
-    background-color: var(--accent-cyan);
-    color: var(--primary-bg);
     border-color: var(--accent-cyan);
+    color: var(--text-primary);
 }
 
 .spectrogram-switch {
@@ -171,14 +118,15 @@ body {
     font-size: 0.9rem;
 }
 
-/* ============================================================================
-   Main Content Area
-   ============================================================================ */
-
-.main-content {
-    padding: 2rem;
-    background-color: var(--primary-bg);
+/* Ensure audio players in control deck look good */
+.app-card audio {
+    filter: invert(1) hue-rotate(180deg); /* Basic invert for dark mode */
 }
+
+
+/* ============================================================================
+   Main Content Area (Original)
+   ============================================================================ */
 
 .section-heading {
     color: var(--text-secondary);
@@ -300,33 +248,92 @@ body {
     height: 300px;
 }
 
+/* ============================================================================
+   Scale Selector Buttons - Updated for better visibility
+   ============================================================================ */
+
 .scale-selector {
     display: flex;
     gap: 0.5rem;
 }
 
+/* Default state - inactive button (more visible) */
 .scale-selector .btn {
-    background-color: var(--graph-bg);
-    border-color: var(--border-color);
-    color: var(--text-primary);
+    background-color: var(--secondary-bg);
+    border: 2px solid var(--text-secondary);
+    color: var(--text-primary) !important;
     font-size: 0.8rem;
     padding: 0.4rem 1rem;
+    transition: all 0.3s ease;
 }
 
+/* Hover state - inactive button */
+.scale-selector .btn:hover {
+    background-color: var(--secondary-bg);
+    border-color: var(--accent-cyan);
+    color: var(--text-primary) !important;
+}
+
+/* Active state - selected button */
 .scale-selector .btn.active {
     background-color: var(--accent-cyan);
     border-color: var(--accent-cyan);
-    color: var(--primary-bg);
+    color: var(--text-primary) !important;
+}
+
+/* Active button hover - keep it visible */
+.scale-selector .btn.active:hover {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: var(--text-primary) !important;
+}
+
+/* Outline button specifically (for non-active state) */
+.scale-selector .btn-outline-primary {
+    background-color: var(--secondary-bg);
+    border: 2px solid var(--text-secondary);
+    color: var(--text-primary) !important;
+}
+
+.scale-selector .btn-outline-primary:hover {
+    background-color: var(--secondary-bg);
+    border-color: var(--accent-cyan);
+    color: var(--text-primary) !important;
+}
+
+/* Primary button (active state) */
+.scale-selector .btn-primary {
+    background-color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+    color: var(--text-primary) !important;
+}
+
+.scale-selector .btn-primary:hover {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: var(--text-primary) !important;
+}
+
+/* Focus state - remove default bootstrap focus */
+.scale-selector .btn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 217, 255, 0.25);
+}
+
+/* Active button - pressed state */
+.scale-selector .btn:active {
+    background-color: var(--accent-cyan) !important;
+    border-color: var(--accent-cyan) !important;
 }
 
 /* ============================================================================
    Equalizer Sliders
    ============================================================================ */
 
+/* The .equalizer-section is now just an .app-card */
 .equalizer-section {
     background-color: var(--secondary-bg);
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid var(--border-color);
 }
 
@@ -509,14 +516,13 @@ body {
 }
 
 @media (max-width: 768px) {
-    .sidebar {
-        position: relative;
-        width: 100% !important;
-        border-right: none;
-        border-bottom: 1px solid var(--border-color);
+    /* The new layout is already more responsive, so sidebar rules are not needed */
+    
+    .main-app-content {
+        padding: 0.5rem;
     }
-
-    .main-content {
+    
+    .app-card {
         padding: 1rem;
     }
 
@@ -545,9 +551,8 @@ body {
     }
 }
 
-.slider-container,
-.graph-row,
-.frequency-graph {
+/* Apply fade-in to the new cards */
+.app-card {
     animation: fadeIn 0.3s ease-out;
 }
 
