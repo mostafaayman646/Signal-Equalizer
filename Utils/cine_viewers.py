@@ -57,7 +57,10 @@ class CineViewer:
                         [
                             dcc.Graph(
                                 id=graph_id,
-                                config={"displayModeBar": False},
+                                config={
+                                    "displayModeBar": False,
+                                    "scrollZoom": True,
+                                },
                                 className="signal-graph",
                                 style={"height": "280px", "minHeight": "260px"},
                             ),
@@ -74,6 +77,7 @@ class CineViewer:
                 ],
                 className="cine-graph-card shadow-sm h-100",
             )
+
         return html.Div(
             [
                 html.Div(
@@ -390,7 +394,11 @@ class CineViewer:
             trigger = ctx.triggered_id
             relayout = relayout_pre if trigger == ns("graph-pre") else relayout_post
             if relayout is None or window is None:
-                return no_update, last
+                return no_update, no_update
+
+            window_changed = False
+            last_changed = False
+            new_last = last or {}
 
             if "xaxis.range[0]" in relayout and "xaxis.range[1]" in relayout:
                 start_t = relayout["xaxis.range[0]"]
@@ -398,12 +406,30 @@ class CineViewer:
                 sr = window["sample_rate"]
                 start_idx = max(0, int(start_t * sr))
                 end_idx = min(window["total"], int(end_t * sr))
-                if end_idx > start_idx:
+                if end_idx > start_idx and (
+                        start_idx != window["start"] or end_idx != window["end"]
+                ):
                     window["start"] = start_idx
                     window["end"] = end_idx
-                    return window, relayout
+                    window_changed = True
 
-            return no_update, last
+            if relayout.get("yaxis.autorange"):
+                if new_last.get("autorange") is not True or new_last.get("y_range") is not None:
+                    new_last = {"y_range": None, "autorange": True}
+                    last_changed = True
+            elif "yaxis.range[0]" in relayout and "yaxis.range[1]" in relayout:
+                y_range = [
+                    float(relayout["yaxis.range[0]"]),
+                    float(relayout["yaxis.range[1]"]),
+                ]
+                if new_last.get("y_range") != y_range or not new_last.get("autorange", False):
+                    new_last = {"y_range": y_range, "autorange": False}
+                    last_changed = True
+
+            return (
+                window if window_changed else no_update,
+                new_last if last_changed else no_update,
+            )
 
         # ---------- render figures ----------
         @app.callback(
@@ -412,10 +438,11 @@ class CineViewer:
             Output(ns("cursor-readout-pre"), "children"),
             Output(ns("cursor-readout-post"), "children"),
             Input(ns("window-state"), "data"),
+            Input(ns("last-relayout"), "data"),
             State("signal-data-store", "data"),
             State("processed-signal-store", "data"),
         )
-        def _update_figures(window, original, processed):
+        def _update_figures(window, last_state, original, processed):
             if not window or not original:
                 empty = go.Figure().update_layout(template="plotly_dark")
                 return empty, empty, "—", "—"
@@ -446,6 +473,22 @@ class CineViewer:
 
             fig_pre = _make_figure(x_pre, y_pre, "Input signal")
             fig_post = _make_figure(x_post, y_post, "Output signal")
+
+            synced_y = None
+            force_autorange = False
+            if isinstance(last_state, dict):
+                synced_y = last_state.get("y_range")
+                force_autorange = last_state.get("autorange", False)
+
+            for fig in (fig_pre, fig_post):
+                fig.update_layout(uirevision="cine-y-sync")
+
+            if force_autorange:
+                for fig in (fig_pre, fig_post):
+                    fig.update_yaxes(range=None, autorange=True)
+            elif synced_y is not None:
+                for fig in (fig_pre, fig_post):
+                    fig.update_yaxes(range=synced_y, autorange=False)
 
             readout = f"{start / sr:.3f}s → {end / sr:.3f}s"
             return fig_pre, fig_post, readout, readout
