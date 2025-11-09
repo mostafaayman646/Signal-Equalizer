@@ -1,5 +1,5 @@
 import numpy as np
-from fft import *
+from Utils.fft import *
 
 def spectrogram(X, fs, fft_size = 512, hop_size = 128):
     """
