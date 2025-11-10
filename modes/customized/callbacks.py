@@ -10,9 +10,9 @@ import json
 
 from Utils import spectrogram
 from Utils.fft import ifft,time_to_frequency_linear
-from components.layout_builder import load_mode_config, create_slider
+from components.layout_builder import create_slider
 from components.main_callbacks import create_spec_figure,create_time_figure
-
+from Utils.load_mode import load_mode_config
 # ============================================================================
 # Helper Functions
 # ============================================================================

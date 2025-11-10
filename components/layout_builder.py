@@ -11,37 +11,6 @@ import os
 from Utils.cine_viewers import CineViewer
 cine_viewer = CineViewer(namespace="cine")
 
-def load_mode_config(mode):
-    """Load slider configs for a mode from JSON"""
-    # Define the modes that have dedicated files
-    file_based_modes = ['Musical_Instruments', 'Animal_Sounds', 'Human_Voices']
-
-    if mode in file_based_modes:
-        # Dynamically create filename based on mode
-        json_filename = f"../Setting/{mode}_Frequency_Map.json"
-        json_path = os.path.join(os.path.dirname(__file__), json_filename)
-        
-        try:
-            with open(json_path, 'r') as f:
-                data = json.load(f)
-        except FileNotFoundError:
-            print(f"Error: Frequency map file not found at {json_path}")
-            return {}
-        except json.JSONDecodeError:
-            print(f"Error: Could not decode JSON from {json_path}")
-            return {}
-    
-    elif mode == 'generic':
-        # Generic mode has no sliders/map
-        return {}
-    else:
-        # Handle other potential modes or error
-        print(f"Warning: No frequency map defined for mode '{mode}'.")
-        return {}
-    
-    # Data is now the root object for that mode, access 'sliders' directly
-    return data.get('sliders', [])
-
 def create_app_layout():
     """Creates the main application layout"""
 
@@ -92,20 +61,7 @@ def create_content_layout():
     return html.Div([
         # Row 1: Control Deck (Replaces Sidebar)
         create_control_deck(),
-
-        # Row 2: Time Domain Graphs
-        # html.Div([
-        #     html.H5("TIME DOMAIN", className="section-heading"),
-        #     dcc.Graph(
-        #         id='time-domain-pre', config={'displayModeBar': False},
-        #         style={'height': '200px', 'backgroundColor': '#161821', 'borderRadius': '8px', 'marginBottom': '1rem'}
-        #     ),
-        #     dcc.Graph(
-        #         id='time-domain-post', config={'displayModeBar': False},
-        #         style={'height': '200px', 'backgroundColor': '#161821', 'borderRadius': '8px'}
-        #     )
-        # ], className="app-card"),
-
+        
         html.Div(
             cine_viewer.layout(),
             className="app-card"
@@ -151,7 +107,7 @@ def create_content_layout():
 
 
 def create_control_deck():
-    """Creates the top control deck card, replacing the old sidebar"""
+    """Creates the top control deck card"""
     
     return html.Div([
         dbc.Row([
@@ -202,20 +158,6 @@ def create_control_deck():
             ], width=12, md=3),
         ])
     ], className="app-card")
-
-
-def create_customized_sliders_area():
-    """Creates the sliders area for customized modes"""
-    # This now gets placed inside the 'app-card' style automatically
-    return html.Div([
-        html.H5("EQUALIZER", className="section-heading"),
-        html.Div(id='sliders-container', style={
-            'display': 'flex',
-            'justifyContent': 'space-around',
-            'padding': '2rem 0',
-        })
-    ], className="app-card equalizer-section") # Re-use equalizer-section for consistent padding
-
 
 def create_slider(slider_config):
     """Creates a single equalizer slider"""
