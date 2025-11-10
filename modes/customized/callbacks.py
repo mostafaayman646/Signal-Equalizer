@@ -86,20 +86,20 @@ def register_customized_callbacks(app):
     # CALLBACK: Update Content
     # ========================================================================
     
-    @app.callback(
-        Output('sliders-container', 'children'),
-        Input('current-mode', 'data'),
-        prevent_initial_call=True
-    )
-    def update_sliders(mode):
-        """Updates sliders when mode changes"""
-        if mode == 'generic':
-            return []
-
-        slider_configs = load_mode_config(mode)
-        sliders = [create_slider(config) for config in slider_configs]
-        return sliders
-    
+    # @app.callback(
+    #     Output('sliders-container', 'children'),
+    #     Input('current-mode', 'data'),
+    #     prevent_initial_call=True
+    # )
+    # def update_sliders(mode):
+    #     """Updates sliders when mode changes"""
+    #     # if mode == 'generic':
+    #     #     return []
+    #
+    #     slider_configs = load_mode_config(mode)
+    #     sliders = [create_slider(config) for config in slider_configs]
+    #     return sliders
+    #
     # ========================================================================
     # CALLBACK: Process Signal with Sliders (Customized Modes Only)
     # ========================================================================
