@@ -5,12 +5,48 @@ import base64
 import tempfile
 import os
 
+import sys
+import importlib.util
 from Utils import spectrogram, load_audio, save_audio_as_wav, audio_to_base64_uri
 from components.layout_builder import load_mode_config, create_slider, create_customized_sliders_area
+
+
+current = os.path.abspath(__file__)
+while not os.path.exists(os.path.join(current, 'assets')):
+    current = os.path.dirname(current)
+
+pyd_file = os.path.join(current, 'assets', 'build', 'lib.win-amd64-cpython-313', 'fft_module.cp313-win_amd64.pyd')
+spec = importlib.util.spec_from_file_location("fft_module", pyd_file)
+fft_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(fft_module)
+
 
 # ========================================================================
 # HELPER FUNCTIONS
 # ========================================================================
+
+def next_power_of_two_bitwise(n):
+    if n == 0:
+        return 1
+    n -= 1
+    n |= n >> 1
+    n |= n >> 2
+    n |= n >> 4
+    n |= n >> 8
+    n |= n >> 16
+    n |= n >> 32  # only needed if working with big numbers
+    return n + 1
+
+def pad_to_next_power_of_two(data):
+    current_size = len(data)
+    target_size = next_power_of_two_bitwise(current_size)
+
+    if target_size > current_size:
+        # Pad with zeros
+        data = data + [0] * (target_size - current_size)
+
+    return data
+
 def create_spec_figure(f, t, Sxx):#Main callbacks -----------------------------------------------------------------
     """Create spectrogram figure"""
     # Sxx_db = 10 * np.log10(Sxx + 1e-10)
@@ -84,14 +120,80 @@ def register_main_callbacks(app):
 
         return content, mode
     
-    # ========================================================================
-    # CALLBACK: Upload Signal
-    # ========================================================================
+    # # ========================================================================
+    # # CALLBACK: Upload Signal
+    # # ========================================================================
+    # @app.callback(
+    #     Output('signal-data-store', 'data'),
+    #     # Output('time-domain-pre', 'figure'),
+    #     # Output('spectrogram-pre', 'figure'),
+    #     # Output('frequency-domain', 'figure'),
+    #     Input('upload-signal', 'contents'),
+    #     State('upload-signal', 'filename'),
+    #     prevent_initial_call=True
+    # )
+    # def upload_signal(contents, filename):
+    #     """Load and display uploaded signal"""
+    #     if not contents:
+    #         return no_update, no_update, no_update, no_update
+    #
+    #     try:
+    #         # Decode and save temporarily
+    #         content_type, content_string = contents.split(',')
+    #         decoded = base64.b64decode(content_string)
+    #
+    #         temp_dir = tempfile.gettempdir()
+    #         temp_path = os.path.join(temp_dir, filename)
+    #
+    #         with open(temp_path, 'wb') as f:
+    #             f.write(decoded)
+    #
+    #         # Load audio
+    #         signal, sr = load_audio(temp_path)
+    #
+    #         # Convert stereo to mono
+    #         if signal.ndim > 1:
+    #             signal = signal.mean(axis=1)
+    #
+    #         # Store data
+    #         signal_data = {
+    #             'signal': signal.tolist(),
+    #             'sample_rate': int(sr),
+    #             'filename': filename
+    #         }
+    #
+    #         # Create visualizations
+    #         # fft_result = fft_module.fft(signal)
+    #         # print(len(fft_result))
+    #         # time = np.arange(len(signal)) / sr
+    #
+    #         # time_fig = create_time_figure(time, signal, "Original Signal")
+    #
+    #         # f, t, Sxx = spectrogram(signal, sr)
+    #         # spec_fig = create_spec_figure(f, t, Sxx)
+    #
+    #         # freq_fig = create_freq_figure(fft_result['frequencies'], fft_result['magnitude'])
+    #
+    #         # print(f"✓ Loaded: {filename} ({len(signal)} samples, {sr} Hz)")
+    #         # print(len(signal_data))
+    #         # return (signal_data,
+    #         #         # time_fig,
+    #         #         spec_fig,
+    #         #         # freq_fig
+    #         # )
+    #         return signal_data
+    #
+    #     except Exception as e:
+    #         print(f"✗ Error: {e}")
+    #         import traceback
+    #         traceback.print_exc()
+    #         return no_update, no_update , no_update,no_update
+    #
+
     @app.callback(
         Output('signal-data-store', 'data'),
-        # Output('time-domain-pre', 'figure'),
         # Output('spectrogram-pre', 'figure'),
-        # Output('frequency-domain', 'figure'),
+        Output('frequency-domain', 'figure'),
         Input('upload-signal', 'contents'),
         State('upload-signal', 'filename'),
         prevent_initial_call=True
@@ -99,7 +201,7 @@ def register_main_callbacks(app):
     def upload_signal(contents, filename):
         """Load and display uploaded signal"""
         if not contents:
-            return no_update, no_update, no_update, no_update
+            return no_update, no_update, no_update
 
         try:
             # Decode and save temporarily
@@ -119,39 +221,44 @@ def register_main_callbacks(app):
             if signal.ndim > 1:
                 signal = signal.mean(axis=1)
 
-            # Store data
+            # Store data - IMPORTANT: Use 'samples' key for cine viewer!
             signal_data = {
-                'signal': signal.tolist(),
+                'samples': signal.tolist(),  # Cine viewer needs 'samples'
+                'signal': signal.tolist(),  # Keep for backward compatibility
                 'sample_rate': int(sr),
                 'filename': filename
             }
 
             # Create visualizations
-            # fft_result = time_to_frequency_linear(signal.tolist(), float(sr))
-            # time = np.arange(len(signal)) / sr
-
-            # time_fig = create_time_figure(time, signal, "Original Signal")
-
             # f, t, Sxx = spectrogram(signal, sr)
+            # f,t,Sxx = 0,0,0
             # spec_fig = create_spec_figure(f, t, Sxx)
 
-            # freq_fig = create_freq_figure(fft_result['frequencies'], fft_result['magnitude'])
+            # Compute FFT for frequency domain
+            signal_complex = signal.astype(complex)
+            signal_complex = pad_to_next_power_of_two(signal_complex.tolist())
+            fft_result = fft_module.fft(signal_complex)
 
-            # print(f"✓ Loaded: {filename} ({len(signal)} samples, {sr} Hz)")
-            # print(len(signal_data))
-            # return (signal_data,
-            #         # time_fig,
-            #         spec_fig,
-            #         # freq_fig
-            # )
-            return signal_data
+            N = len(fft_result)
+            num_bins = N // 2 + 1
+            frequencies = [k * sr / N for k in range(num_bins)]
+            magnitudes = [abs(fft_result[k]) for k in range(num_bins)]
+            freq_fig = create_freq_figure(frequencies, magnitudes)
+
+            print(f"✓ Loaded: {filename} ({len(signal)} samples, {sr} Hz)")
+
+            # return (signal_data,spec_fig,freq_fig)
+            return signal_data,freq_fig
 
         except Exception as e:
             print(f"✗ Error: {e}")
             import traceback
             traceback.print_exc()
-            return no_update, no_update , no_update,no_update
-    
+            return (no_update,
+                    # no_update,
+                    # no_update
+                    )
+
     # ========================================================================
     # CALLBACK: Toggle Spectrograms
     # ========================================================================

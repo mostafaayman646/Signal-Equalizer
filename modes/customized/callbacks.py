@@ -103,9 +103,69 @@ def register_customized_callbacks(app):
     # ========================================================================
     # CALLBACK: Process Signal with Sliders (Customized Modes Only)
     # ========================================================================
+    # @app.callback(
+    #     Output('processed-signal-store', 'data'),
+    #     Output('time-domain-post', 'figure'),
+    #     Output('spectrogram-post', 'figure'),
+    #     Input({'type': 'equalizer-slider', 'index': ALL}, 'value'),
+    #     State('signal-data-store', 'data'),
+    #     State('current-mode', 'data'),
+    #     prevent_initial_call=True
+    # )
+    # def process_with_sliders(slider_values, signal_data, mode):
+    #     """Apply equalization based on slider values (for customized modes)"""
+    #
+    #     # Skip if generic mode (has its own processing)
+    #     if mode == 'generic' or not signal_data or not slider_values:
+    #         return no_update, no_update, no_update
+    #
+    #     try:
+    #         # Get signal
+    #         print(len(signal_data))
+    #         signal = np.array(signal_data['signal'])
+    #         sr = signal_data['sample_rate']
+    #
+    #         # Get frequency map
+    #         freq_map = load_frequency_map(mode)
+    #
+    #         # Process
+    #         fft_result = time_to_frequency_linear(signal.tolist(), float(sr))
+    #         modified_fft = apply_scaling(fft_result['full_fft'], freq_map, slider_values, sr, len(signal))
+    #
+    #         # Inverse FFT
+    #         processed = ifft(modified_fft)
+    #         processed = np.array([x.real for x in processed])[:len(signal)]
+    #
+    #         # Normalize
+    #         max_val = np.max(np.abs(processed))
+    #         if max_val > 1.0:
+    #             processed /= max_val
+    #
+    #         # Store
+    #         processed_data = {
+    #             'signal': processed.tolist(),
+    #             'sample_rate': sr
+    #         }
+    #
+    #         # Visualize
+    #         time = np.arange(len(processed)) / sr
+    #         time_fig = create_time_figure(time, processed, "Processed Signal")
+    #
+    #         f, t, Sxx = spectrogram(processed, sr)
+    #         spec_fig = create_spec_figure(f, t, Sxx)
+    #
+    #         print(f"✓ Processed with {len(slider_values)} sliders")
+    #
+    #         return processed_data, time_fig, spec_fig
+    #
+    #     except Exception as e:
+    #         print(f"✗ Processing error: {e}")
+    #         import traceback
+    #         traceback.print_exc()
+    #         return no_update, no_update, no_update
+
     @app.callback(
         Output('processed-signal-store', 'data'),
-        Output('time-domain-post', 'figure'),
         Output('spectrogram-post', 'figure'),
         Input({'type': 'equalizer-slider', 'index': ALL}, 'value'),
         State('signal-data-store', 'data'),
@@ -115,52 +175,69 @@ def register_customized_callbacks(app):
     def process_with_sliders(slider_values, signal_data, mode):
         """Apply equalization based on slider values (for customized modes)"""
 
-        # Skip if generic mode (has its own processing)
+        # Skip if generic mode or no data
         if mode == 'generic' or not signal_data or not slider_values:
-            return no_update, no_update, no_update
+            return no_update, no_update
 
         try:
-            # Get signal
-            print(len(signal_data))
-            signal = np.array(signal_data['signal'])
+            # Get signal - check both 'samples' and 'signal' keys
+            if 'samples' in signal_data:
+                signal = np.array(signal_data['samples'])
+            elif 'signal' in signal_data:
+                signal = np.array(signal_data['signal'])
+            else:
+                return no_update, no_update
+
             sr = signal_data['sample_rate']
 
             # Get frequency map
             freq_map = load_frequency_map(mode)
 
-            # Process
-            fft_result = time_to_frequency_linear(signal.tolist(), float(sr))
-            modified_fft = apply_scaling(fft_result['full_fft'], freq_map, slider_values, sr, len(signal))
+            # Load FFT module
+            import sys
+            import importlib.util
+            current = os.path.abspath(__file__)
+            while not os.path.exists(os.path.join(current, 'assets')):
+                current = os.path.dirname(current)
+            pyd_file = os.path.join(current, 'assets', 'build', 'lib.win-amd64-cpython-313',
+                                    'fft_module.cp313-win_amd64.pyd')
+            spec = importlib.util.spec_from_file_location("fft_module", pyd_file)
+            fft_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(fft_module)
+
+            # Process with FFT
+            signal_complex = [complex(x, 0) for x in signal.tolist()]
+            fft_result = fft_module.fft(signal_complex)
+
+            # Apply frequency scaling
+            modified_fft = apply_scaling(fft_result, freq_map, slider_values, sr, len(signal))
 
             # Inverse FFT
-            processed = ifft(modified_fft)
-            processed = np.array([x.real for x in processed])[:len(signal)]
+            processed_complex = fft_module.ifft(modified_fft)
+            processed = np.array([x.real for x in processed_complex])[:len(signal)]
 
             # Normalize
             max_val = np.max(np.abs(processed))
             if max_val > 1.0:
                 processed /= max_val
 
-            # Store
+            # Store - IMPORTANT: Use 'samples' key for cine viewer!
             processed_data = {
-                'signal': processed.tolist(),
+                'samples': processed.tolist(),  # Cine viewer needs 'samples'
+                'signal': processed.tolist(),  # Keep for backward compatibility
                 'sample_rate': sr
             }
 
-            # Visualize
-            time = np.arange(len(processed)) / sr
-            time_fig = create_time_figure(time, processed, "Processed Signal")
-
+            # Create spectrogram
             f, t, Sxx = spectrogram(processed, sr)
             spec_fig = create_spec_figure(f, t, Sxx)
 
             print(f"✓ Processed with {len(slider_values)} sliders")
 
-            return processed_data, time_fig, spec_fig
+            return processed_data, spec_fig
 
         except Exception as e:
             print(f"✗ Processing error: {e}")
             import traceback
             traceback.print_exc()
-            return no_update, no_update, no_update
-    
+            return no_update, no_update
