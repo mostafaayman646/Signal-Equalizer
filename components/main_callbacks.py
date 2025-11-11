@@ -155,7 +155,7 @@ def register_main_callbacks(app):
     
     @app.callback(
         Output('signal-data-store', 'data'),
-        # Output('spectrogram-pre', 'figure'),
+        Output('spectrogram-pre', 'figure'),
         Output('frequency-domain', 'figure'),
         Input('upload-signal', 'contents'),
         State('upload-signal', 'filename'),
@@ -216,14 +216,14 @@ def register_main_callbacks(app):
             freq_fig = create_freq_figure(frequencies, magnitudes, use_db=True)
 
             # Create spectrogram (use full signal)
-            # f, t, Sxx = spectrogram(signal, sr)
-            # spec_fig = create_spec_figure(f, t, Sxx)
+            f, t, Sxx = spectrogram(signal, sr, fft_module)
+            spec_fig = create_spec_figure(f, t, Sxx)
 
             print(f"✓ Loaded: {filename} ({len(signal)} samples, {sr} Hz)")
             print(f"✓ FFT computed on {n_fft} samples for frequency plot")
 
-            # return signal_data, spec_fig, freq_fig
-            return signal_data,freq_fig
+            return signal_data, spec_fig, freq_fig
+            # return signal_data,freq_fig
 
         except Exception as e:
             print(f"✗ Error: {e}")

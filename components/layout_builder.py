@@ -74,12 +74,12 @@ def create_content_layout():
                 dbc.Col([
                     html.Div("Original Signal", style={'color': '#a0a4b8', 'fontSize': '0.8rem', 'marginBottom': '0.5rem', 'textAlign': 'center'}),
                     dcc.Graph(id='spectrogram-pre', config={'displayModeBar': False},
-                             style={'height': '300px', 'backgroundColor': '#161821', 'borderRadius': '8px'})
+                             style={'height': '600px', 'backgroundColor': '#161821', 'borderRadius': '8px'})
                 ], width=6, id='spectrogram-pre-col'),
                 dbc.Col([
                     html.Div("Processed Signal", style={'color': '#a0a4b8', 'fontSize': '0.8rem', 'marginBottom': '0.5rem', 'textAlign': 'center'}),
                     dcc.Graph(id='spectrogram-post', config={'displayModeBar': False},
-                             style={'height': '300px', 'backgroundColor': '#161821', 'borderRadius': '8px'})
+                             style={'height': '600px', 'backgroundColor': '#161821', 'borderRadius': '8px'})
                 ], width=6, id='spectrogram-post-col')
             ])
         ], className="app-card"),
