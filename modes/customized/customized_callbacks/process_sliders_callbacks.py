@@ -3,6 +3,17 @@ Customized Modes Callbacks
 Handles: Musical Instruments, Animal Sounds, Human Voices
 """
 
+import os
+import sys
+
+current = os.path.abspath(__file__)
+while not os.path.exists(os.path.join(current, 'assets')):
+    current = os.path.dirname(current)
+
+# Add this!
+if current not in sys.path:
+    sys.path.insert(0, current)
+
 from dash import Input, Output, State,no_update, ALL
 import numpy as np
 import os
@@ -11,7 +22,8 @@ import json
 from Utils import spectrogram
 from Utils.fft import ifft,time_to_frequency_linear
 from components.layout_builder import create_slider
-from components.main_callbacks import create_spec_figure,create_time_figure
+# from components.layouts import create_spec_figure,create_time_figure
+from components.layouts.spec_figure_layout import create_spec_figure
 from Utils.load_mode import load_mode_config
 # ============================================================================
 # Helper Functions
@@ -44,34 +56,35 @@ def load_frequency_map(mode):
     """Load frequency map for a customized mode"""
     
     # Define the modes that have dedicated files
-    file_based_modes = ['Musical_Instruments', 'Animal_Sounds', 'Human_Voices']
+    # file_based_modes = ['Musical_Instruments', 'Animal_Sounds', 'Human_Voices']
 
-    if mode in file_based_modes:
-        # Dynamically create filename based on mode
-        json_filename = f"Setting/{mode}_Frequency_Map.json"
-        json_path = os.path.join(os.path.dirname(__file__), json_filename)
+    # if mode in file_based_modes:
+    #     # Dynamically create filename based on mode
+    #     json_filename = f"Setting/{mode}_Frequency_Map.json"
+    #     json_path = os.path.join(os.path.dirname(__file__), json_filename)
         
-        try:
-            with open(json_path, 'r') as f:
-                data = json.load(f)
-        except FileNotFoundError:
-            print(f"Error: Frequency map file not found at {json_path}")
-            return {}
-        except json.JSONDecodeError:
-            print(f"Error: Could not decode JSON from {json_path}")
-            return {}
+    #     try:
+    #         with open(json_path, 'r') as f:
+    #             data = json.load(f)
+    #     except FileNotFoundError:
+    #         print(f"Error: Frequency map file not found at {json_path}")
+    #         return {}
+    #     except json.JSONDecodeError:
+    #         print(f"Error: Could not decode JSON from {json_path}")
+    #         return {}
     
-    elif mode == 'generic':
-        # Generic mode has no sliders/map
-        return {}
-    else:
-        # Handle other potential modes or error
-        print(f"Warning: No frequency map defined for mode '{mode}'.")
-        return {}
+    # elif mode == 'generic':
+    #     # Generic mode has no sliders/map
+    #     return {}
+    # else:
+    #     # Handle other potential modes or error
+    #     print(f"Warning: No frequency map defined for mode '{mode}'.")
+    #     return {}
 
-    freq_map = {}
     # Data is now the root object for that mode, access 'sliders' directly
-    sliders = data.get('sliders', [])
+    # sliders = data.get('sliders', [])
+    sliders = load_mode_config(mode)
+    freq_map = {}
 
     for slider in sliders:
         freq_map[slider['id']] = slider['frequency_ranges']

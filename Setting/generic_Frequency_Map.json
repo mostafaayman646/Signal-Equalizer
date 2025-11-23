@@ -1,0 +1,97 @@
+{
+  "name": "Generic",
+  "sliders": [
+    {
+      "id": "slider-male",
+      "label": "Male",
+      "icon": "fas fa-male",
+      "frequency_ranges": [
+        [
+          85,
+          180
+        ],
+        [
+          300,
+          600
+        ],
+        [
+          800,
+          2000
+        ],
+        [
+          2500,
+          3500
+        ]
+      ]
+    },
+    {
+      "id": "slider-female",
+      "label": "Female",
+      "icon": "fas fa-female",
+      "frequency_ranges": [
+        [
+          165,
+          255
+        ],
+        [
+          400,
+          800
+        ],
+        [
+          1000,
+          2500
+        ],
+        [
+          3000,
+          4500
+        ]
+      ]
+    },
+    {
+      "id": "slider-child",
+      "label": "Child",
+      "icon": "fas fa-child",
+      "frequency_ranges": [
+        [
+          250,
+          400
+        ],
+        [
+          500,
+          1000
+        ],
+        [
+          1500,
+          3500
+        ],
+        [
+          4000,
+          6000
+        ]
+      ]
+    },
+    {
+      "id": "slider-elderly",
+      "label": "Elderly",
+      "icon": "fas fa-user",
+      "frequency_ranges": [
+        [
+          80,
+          200
+        ],
+        [
+          280,
+          650
+        ],
+        [
+          750,
+          2200
+        ],
+        [
+          2400,
+          3800
+        ]
+      ]
+    }
+  ]
+}

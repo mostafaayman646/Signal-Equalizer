@@ -3,14 +3,21 @@ Signal Equalizer Pro - Main Application
 """
 
 import dash
-from dash import html, dcc, Input, Output, State
 import dash_bootstrap_components as dbc
 
 # Import components and callbacks
 from components.layout_builder import create_app_layout, cine_viewer
-from components.main_callbacks import register_main_callbacks
-from modes.customized.callbacks import register_customized_callbacks
-# from modes.generic.callbacks import register_generic_callbacks
+
+from components.callbacks.Upload_signal import register_Upload_signal
+from components.callbacks.NavBar_Mode_Switch import register_mode_switch
+from components.callbacks.Toggle_spectogram import register_Toggle_spectogram
+from components.callbacks.PlayAudio import register_PlayAudio
+from components.callbacks.Download_Audio import register_Download_audio
+from components.callbacks.Scale_toggle import register_Scale_toggle
+
+from modes.customized.customized_callbacks.process_sliders_callbacks import register_customized_callbacks
+from modes.customized.customized_callbacks.Render_Ai_models_callbacks import register_ai_models
+from modes.customized.customized_callbacks.Musical_Ai_model_callbacks import register_Musical_AiModel
 
 # Initialize App
 app = dash.Dash(
@@ -29,9 +36,15 @@ app.layout = create_app_layout()
 
 # Register callbacks
 cine_viewer.register_callbacks(app)
-register_main_callbacks(app)
-register_customized_callbacks(app)  # For instruments, animals, voices
-# register_generic_callbacks(app)      # For generic mode
+register_Upload_signal(app)
+register_mode_switch(app)
+register_Toggle_spectogram(app)
+register_PlayAudio(app)
+register_Download_audio(app)
+register_Scale_toggle(app)
+register_customized_callbacks(app)
+register_ai_models(app)
+register_Musical_AiModel(app)
 
 if __name__ == '__main__':
     print("=" * 70)

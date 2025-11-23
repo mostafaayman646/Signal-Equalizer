@@ -1,6 +1,6 @@
 from dash import html
 
-def create_customized_sliders_area():
+def create_sliders_area():
     """Creates the sliders area for customized modes"""
     # This now gets placed inside the 'app-card' style automatically
     return html.Div([

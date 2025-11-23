@@ -102,8 +102,21 @@ def create_content_layout():
         ], className="app-card"),
 
         # Row 5: Mode-specific content container (Equalizer)
-        html.Div(id='mode-content-area')
+        # html.Div(id='mode-content-area')
+        html.Div([
+        html.H5("EQUALIZER", className="section-heading"),
+        html.Div(id='sliders-container', style={
+            'display': 'flex',
+            'justifyContent': 'space-around',
+            'padding': '2rem 0',
+        })
+        ], className="app-card equalizer-section",id='mode-content-area'),
+        
+        # Row 6: AI Models (placeholder for future use)
+        html.Div(id='ai_models'),
     ])
+
+
 
 
 def create_control_deck():
