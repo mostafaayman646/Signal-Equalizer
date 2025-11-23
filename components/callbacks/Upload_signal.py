@@ -61,7 +61,9 @@ def register_Upload_signal(app):
                 'samples': signal.tolist(),
                 'signal': signal.tolist(),
                 'sample_rate': int(sr),
-                'filename': filename
+                'filename': filename,
+
+                'path':temp_path # Todo
             }
 
             # OPTIMIZATION: Limit FFT size for frequency plot
