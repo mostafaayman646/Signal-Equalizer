@@ -18,6 +18,7 @@ from components.callbacks.Scale_toggle import register_Scale_toggle
 from modes.customized.customized_callbacks.process_sliders_callbacks import register_customized_callbacks
 from modes.customized.customized_callbacks.Render_Ai_models_callbacks import register_ai_models
 from modes.customized.customized_callbacks.Musical_Ai_model_callbacks import register_Musical_AiModel
+from modes.generic import register_generic_callbacks
 
 # Initialize App
 app = dash.Dash(
@@ -45,6 +46,7 @@ register_Scale_toggle(app)
 register_customized_callbacks(app)
 register_ai_models(app)
 register_Musical_AiModel(app)
+register_generic_callbacks(app)
 
 if __name__ == '__main__':
     print("=" * 70)

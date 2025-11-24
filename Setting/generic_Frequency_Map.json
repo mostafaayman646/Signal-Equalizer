@@ -2,96 +2,28 @@
   "name": "Generic",
   "sliders": [
     {
-      "id": "slider-male",
-      "label": "Male",
-      "icon": "fas fa-male",
+      "id": "generic-ec9afe54",
+      "label": "1",
+      "icon": "fas fa-sliders-h",
       "frequency_ranges": [
         [
-          85,
-          180
-        ],
-        [
-          300,
-          600
-        ],
-        [
-          800,
-          2000
-        ],
-        [
-          2500,
-          3500
+          1632.15,
+          8738.11
         ]
-      ]
+      ],
+      "gain": 0.0
     },
     {
-      "id": "slider-female",
-      "label": "Female",
-      "icon": "fas fa-female",
+      "id": "generic-3a91a6b7",
+      "label": "2",
+      "icon": "fas fa-sliders-h",
       "frequency_ranges": [
         [
-          165,
-          255
-        ],
-        [
-          400,
-          800
-        ],
-        [
-          1000,
-          2500
-        ],
-        [
-          3000,
-          4500
+          12563.49,
+          16802.84
         ]
-      ]
-    },
-    {
-      "id": "slider-child",
-      "label": "Child",
-      "icon": "fas fa-child",
-      "frequency_ranges": [
-        [
-          250,
-          400
-        ],
-        [
-          500,
-          1000
-        ],
-        [
-          1500,
-          3500
-        ],
-        [
-          4000,
-          6000
-        ]
-      ]
-    },
-    {
-      "id": "slider-elderly",
-      "label": "Elderly",
-      "icon": "fas fa-user",
-      "frequency_ranges": [
-        [
-          80,
-          200
-        ],
-        [
-          280,
-          650
-        ],
-        [
-          750,
-          2200
-        ],
-        [
-          2400,
-          3800
-        ]
-      ]
+      ],
+      "gain": 0.0
     }
   ]
 }
