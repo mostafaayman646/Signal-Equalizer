@@ -1,7 +1,6 @@
 import os
 import sys
 
-# Ensure assets folder can be found (standard boilerplate)
 current = os.path.abspath(__file__)
 while not os.path.exists(os.path.join(current, 'assets')):
     current = os.path.dirname(current)
@@ -11,6 +10,7 @@ if current not in sys.path:
 from dash import Output, Input
 from modes.customized.customized_layouts.ai_models_button import create_ai_interface
 
+
 def register_ai_models(app):
     @app.callback(
         Output('ai_models', 'children'),
@@ -18,10 +18,17 @@ def register_ai_models(app):
     )
     def render_ai_interface(mode):
         """
-        If the user selects a supported mode, render the AI Button
-        AND the hidden containers for sliders/storage.
+        Renders the AI interface with a unique prefix based on mode.
         """
-        if mode in ['Musical_Instruments', 'Human_Voices']:
-            return create_ai_interface()
+        if mode == 'Musical_Instruments':
+            # Ensure your Musical callback file uses 'musical-ai-' prefix!
+            # Or stick to 'ai-' if you don't want to edit the music callback file.
+            # For now, let's assume you keep 'ai' for music to avoid breaking it.
+            return create_ai_interface(id_prefix="ai")
+
+        elif mode == 'Human_Voices':
+            # Uses 'human-ai-' prefix to match the NEW human callback file
+            return create_ai_interface(id_prefix="human-ai")
+
         else:
             return []

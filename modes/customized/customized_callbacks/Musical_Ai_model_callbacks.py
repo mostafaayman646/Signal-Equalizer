@@ -9,7 +9,7 @@ def register_Musical_AiModel(app):
     @app.callback(
         [Output('ai-stems-store', 'data'),
          Output('ai-sliders-container', 'children'),
-         Output('loading-status', 'children'),
+         Output('ai-loading-status', 'children'),
          Output('ai-player-container', 'style')],
         Input('ai-equalizer-btn', 'n_clicks'),
         State('signal-data-store', 'data'),

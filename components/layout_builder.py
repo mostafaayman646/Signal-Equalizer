@@ -61,7 +61,7 @@ def create_content_layout():
     return html.Div([
         # Row 1: Control Deck (Replaces Sidebar)
         create_control_deck(),
-        
+
         html.Div(
             cine_viewer.layout(),
             className="app-card"
@@ -95,10 +95,10 @@ def create_content_layout():
                     ]), width="auto"
                 )
             ], align="center", className="mb-3"),
-            
+
             dcc.Graph(id='frequency-domain', config={'displayModeBar': False},
                      style={'height': '300px', 'backgroundColor': '#161821', 'borderRadius': '8px'}),
-        
+
         ], className="app-card"),
 
         # Row 5: Mode-specific content container (Equalizer)
@@ -111,7 +111,7 @@ def create_content_layout():
             'padding': '2rem 0',
         })
         ], className="app-card equalizer-section",id='mode-content-area'),
-        
+
         # Row 6: AI Models (placeholder for future use)
         html.Div(id='ai_models'),
     ])
@@ -121,7 +121,7 @@ def create_content_layout():
 
 def create_control_deck():
     """Creates the top control deck card"""
-    
+
     return html.Div([
         dbc.Row([
             # Column 1: Upload

@@ -27,7 +27,7 @@ def register_mode_switch(app):
         """Switches mode content (sliders or generic controls)"""
 
         slider_configs = load_mode_config(mode)
-        
+
         # if mode == 'generic':
         sliders_area = create_sliders_area()
         sliders = [create_slider(config) for config in slider_configs]
