@@ -2,9 +2,7 @@
 Utility module that wraps the cine (linked time-domain viewer) UI + logic.
 """
 
-from dataclasses import dataclass
-from typing import Callable
-
+import time
 import numpy as np
 import plotly.graph_objects as go
 from dash import dcc, html, ctx, no_update
@@ -12,7 +10,6 @@ from dash import Input, Output, State
 import dash_bootstrap_components as dbc
 
 
-@dataclass
 class CineViewer:
     """
     Reusable cine viewer (paired time-domain plots + playback controls).
@@ -22,11 +19,16 @@ class CineViewer:
         layout_fragment = cine.layout()
         cine.register_callbacks(app)
     """
-    namespace: str = "cine"
-    max_points: int = 2_000  # plotting LOD target
 
-    def __post_init__(self):
-        self._ns: Callable[[str], str] = lambda suffix: f"{self.namespace}-{suffix}"
+    INTERACTION_FREEZE_SEC = 0.50  # pause duration after manual zoom/drag
+    PLAYBACK_STEP_SEC = 0.05       # frame duration for ticker-driven playback
+
+    def __init__(self, namespace="cine", max_points=2000):
+        self.namespace = namespace
+        self.max_points = max_points
+
+    def _ns(self, suffix: str) -> str:
+        return f"{self.namespace}-{suffix}"
 
     # ------------------------------------------------------------------ #
     # Layout
@@ -44,10 +46,7 @@ class CineViewer:
                                     title,
                                     className="text-uppercase small fw-semibold text-secondary",
                                 ),
-                                html.Span(
-                                    badge_text,
-                                    className="viewer-badge",
-                                ),
+                                html.Span(badge_text, className="viewer-badge"),
                             ],
                             className="d-flex align-items-center justify-content-between gap-2",
                         ),
@@ -57,10 +56,7 @@ class CineViewer:
                         [
                             dcc.Graph(
                                 id=graph_id,
-                                config={
-                                    "displayModeBar": False,
-                                    "scrollZoom": True,
-                                },
+                                config={"displayModeBar": False, "scrollZoom": True},
                                 className="signal-graph",
                                 style={"height": "280px", "minHeight": "260px"},
                             ),
@@ -196,7 +192,7 @@ class CineViewer:
                 dcc.Store(id=ns("window-state")),
                 dcc.Store(id=ns("playback-state")),
                 dcc.Store(id=ns("last-relayout")),
-                dcc.Interval(id=ns("ticker"), interval=50, disabled=True),
+                dcc.Interval(id=ns("ticker"), interval=50, disabled=False),
             ],
             id=ns("root"),
         )
@@ -207,6 +203,8 @@ class CineViewer:
     def register_callbacks(self, app):
         ns = self._ns
         max_points = self.max_points
+        freeze_sec = self.INTERACTION_FREEZE_SEC
+        step_sec = self.PLAYBACK_STEP_SEC
 
         # ---------- helper utilities ----------
         def _decimate(y):
@@ -289,6 +287,7 @@ class CineViewer:
                 "is_playing": False,
                 "loop": False,
                 "cursor": 0,
+                "resume_at": None,
             }
             return window, playback
 
@@ -300,22 +299,35 @@ class CineViewer:
             Input(ns("stop"), "n_clicks"),
             Input(ns("loop"), "n_clicks"),
             State(ns("playback-state"), "data"),
+            State(ns("window-state"), "data"),
             prevent_initial_call=True,
         )
-        def _update_playback(play, pause, stop, loop_btn, playback):
+        def _update_playback(play, pause, stop, loop_btn, playback, window):
             if playback is None:
-                playback = {"is_playing": False, "loop": False, "cursor": 0}
+                playback = {"is_playing": False, "loop": False, "cursor": 0, "resume_at": None}
+            else:
+                playback = playback.copy()
 
+            playback.setdefault("resume_at", None)
             trigger = ctx.triggered_id
+
             if trigger == ns("play"):
                 playback["is_playing"] = True
+                playback["resume_at"] = None
+                if window:
+                    playback["cursor"] = window["start"]
             elif trigger == ns("pause"):
                 playback["is_playing"] = False
+                playback["resume_at"] = None
+                if window:
+                    playback["cursor"] = window["start"]
             elif trigger == ns("stop"):
                 playback["is_playing"] = False
                 playback["cursor"] = 0
+                playback["resume_at"] = None
             elif trigger == ns("loop"):
                 playback["loop"] = not playback.get("loop", False)
+
             return playback
 
         @app.callback(
@@ -335,22 +347,15 @@ class CineViewer:
             default_span_seconds = 2.0
             span_samples = max(1, int(default_span_seconds * sample_rate))
 
-            window["start"] = 0
-            window["end"] = min(span_samples, total_samples)
-            return window
+            new_window = window.copy()
+            new_window["start"] = 0
+            new_window["end"] = min(span_samples, total_samples)
+            return new_window
 
-        @app.callback(
-            Output(ns("ticker"), "disabled"),
-            Input(ns("playback-state"), "data"),
-        )
-        def _toggle_interval(playback):
-            if not playback:
-                return True
-            return not playback.get("is_playing", False)
-
-        # ---------- ticker advances window ----------
+        # ---------- ticker-driven window advancement ----------
         @app.callback(
             Output(ns("window-state"), "data", allow_duplicate=True),
+            Output(ns("playback-state"), "data", allow_duplicate=True),
             Input(ns("ticker"), "n_intervals"),
             State(ns("window-state"), "data"),
             State(ns("playback-state"), "data"),
@@ -358,77 +363,124 @@ class CineViewer:
             prevent_initial_call=True,
         )
         def _advance_window(_, window, playback, speed):
-            if not window or not playback or not playback.get("is_playing"):
-                return no_update
+            if not window or not playback:
+                return no_update, no_update
+
+            playback_out = playback.copy()
+            playback_out.setdefault("resume_at", None)
+
+            now = time.time()
+            resume_at = playback_out.get("resume_at")
+            playback_changed = False
+
+            if not playback_out.get("is_playing", False):
+                if resume_at is not None and now >= resume_at:
+                    playback_out["is_playing"] = True
+                    playback_out["resume_at"] = None
+                    playback_changed = True
+                else:
+                    return no_update, playback_out if playback_changed else no_update
 
             sr = window["sample_rate"]
-            span = window["end"] - window["start"]
-            increment = max(1, int(sr * 0.05 * speed))
+            span = max(1, window["end"] - window["start"])
+            increment = max(1, int(sr * step_sec * (speed or 1.0)))
 
             new_start = window["start"] + increment
             new_end = window["end"] + increment
+            window_out = window.copy()
 
             if new_end >= window["total"]:
-                if playback.get("loop"):
+                if playback_out.get("loop"):
                     new_start = 0
                     new_end = min(span, window["total"])
                 else:
                     new_start = max(0, window["total"] - span)
                     new_end = window["total"]
+                    playback_out["is_playing"] = False
+                    playback_out["resume_at"] = None
+                    playback_changed = True
 
-            window["start"] = new_start
-            window["end"] = new_end
-            return window
+            window_out["start"] = new_start
+            window_out["end"] = new_end
+            if playback_out.get("cursor") != new_start:
+                playback_out["cursor"] = new_start
+                playback_changed = True
+
+            return (
+                window_out,
+                playback_out if playback_changed else no_update,
+            )
 
         # ---------- zoom/pan sync ----------
         @app.callback(
             Output(ns("window-state"), "data", allow_duplicate=True),
             Output(ns("last-relayout"), "data"),
+            Output(ns("playback-state"), "data", allow_duplicate=True),
             Input(ns("graph-pre"), "relayoutData"),
             Input(ns("graph-post"), "relayoutData"),
             State(ns("window-state"), "data"),
             State(ns("last-relayout"), "data"),
+            State(ns("playback-state"), "data"),
             prevent_initial_call=True,
         )
-        def _sync_relayout(relayout_pre, relayout_post, window, last):
-            trigger = ctx.triggered_id
-            relayout = relayout_pre if trigger == ns("graph-pre") else relayout_post
+        def _sync_relayout(relayout_pre, relayout_post, window, last, playback):
+            trigger_id = ctx.triggered_id
+            relayout = relayout_pre if trigger_id == ns("graph-pre") else relayout_post
+
             if relayout is None or window is None:
-                return no_update, no_update
+                return no_update, no_update, no_update
+
+            window_out = window.copy()
+            playback_out = playback.copy() if playback else {
+                "is_playing": False,
+                "loop": False,
+                "cursor": window["start"],
+                "resume_at": None,
+            }
+            playback_out.setdefault("resume_at", None)
+            last_out = last or {}
 
             window_changed = False
             last_changed = False
-            new_last = last or {}
+            playback_changed = False
 
             if "xaxis.range[0]" in relayout and "xaxis.range[1]" in relayout:
-                start_t = relayout["xaxis.range[0]"]
-                end_t = relayout["xaxis.range[1]"]
+                start_t = float(relayout["xaxis.range[0]"])
+                end_t = float(relayout["xaxis.range[1]"])
                 sr = window["sample_rate"]
                 start_idx = max(0, int(start_t * sr))
                 end_idx = min(window["total"], int(end_t * sr))
-                if end_idx > start_idx and (
-                        start_idx != window["start"] or end_idx != window["end"]
-                ):
-                    window["start"] = start_idx
-                    window["end"] = end_idx
+                if end_idx > start_idx and (start_idx != window["start"] or end_idx != window["end"]):
+                    window_out["start"] = start_idx
+                    window_out["end"] = end_idx
                     window_changed = True
+                    playback_out["cursor"] = start_idx
+                    if playback_out.get("is_playing", False):
+                        playback_out["is_playing"] = False
+                        playback_out["resume_at"] = time.time() + freeze_sec
+                        playback_changed = True
+                    else:
+                        if playback_out.get("resume_at") is not None:
+                            playback_out["resume_at"] = None
+                            playback_changed = True
 
             if relayout.get("yaxis.autorange"):
-                if new_last.get("autorange") is not True or new_last.get("y_range") is not None:
-                    new_last = {"y_range": None, "autorange": True}
+                if last_out.get("autorange") is not True or last_out.get("y_range") is not None:
+                    last_out = {"y_range": None, "autorange": True}
                     last_changed = True
             elif "yaxis.range[0]" in relayout and "yaxis.range[1]" in relayout:
                 y_range = [
                     float(relayout["yaxis.range[0]"]),
                     float(relayout["yaxis.range[1]"]),
                 ]
-                if new_last.get("y_range") != y_range or not new_last.get("autorange", False):
-                    new_last = {"y_range": y_range, "autorange": False}
+                if last_out.get("y_range") != y_range or last_out.get("autorange", True):
+                    last_out = {"y_range": y_range, "autorange": False}
                     last_changed = True
 
             return (
-                window if window_changed else no_update,
-                new_last if last_changed else no_update,
+                window_out if window_changed else no_update,
+                last_out if last_changed else no_update,
+                playback_out if playback_changed or window_changed else no_update,
             )
 
         # ---------- render figures ----------
