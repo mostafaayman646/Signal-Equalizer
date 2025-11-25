@@ -182,17 +182,26 @@ def _pad_signal_to_power_of_two(signal):
     return padded, fft_len
 
 
-def _create_frequency_figure(fft_result, sample_rate, allow_none=False):
+def _fft_to_freq_arrays(fft_result, sample_rate):
     if fft_result is None:
-        return None if allow_none else no_update
+        return [], []
     if isinstance(fft_result, np.ndarray) and fft_result.size == 0:
-        return None if allow_none else no_update
+        return [], []
     if isinstance(fft_result, list) and len(fft_result) == 0:
-        return None if allow_none else no_update
+        return [], []
     N = len(fft_result)
+    if N == 0:
+        return [], []
     num_bins = N // 2 + 1
     frequencies = [k * sample_rate / N for k in range(num_bins)]
     magnitudes = [abs(fft_result[k]) for k in range(num_bins)]
+    return frequencies, magnitudes
+
+
+def _create_frequency_figure(fft_result, sample_rate, allow_none=False):
+    frequencies, magnitudes = _fft_to_freq_arrays(fft_result, sample_rate)
+    if not frequencies:
+        return None if allow_none else no_update
     return create_freq_figure(frequencies, magnitudes, use_db=True)
 
 
@@ -572,12 +581,14 @@ def register_generic_callbacks(app):
         Output("processed-signal-store", "data", allow_duplicate=True),
         Output("spectrogram-post", "figure", allow_duplicate=True),
         Output("frequency-domain", "figure", allow_duplicate=True),
+        Output("frequency-domain-data", "data", allow_duplicate=True),
         Input("generic-sliders-store", "data"),
         State("signal-data-store", "data"),
         State("current-mode", "data"),
+        State("scale-audiogram", "active"),
         prevent_initial_call=True,
     )
-    def _process_generic_signal(sliders, signal_data, mode):
+    def _process_generic_signal(sliders, signal_data, mode, audiogram_active):
         if mode != "generic" or not signal_data:
             raise PreventUpdate
 
@@ -594,6 +605,8 @@ def register_generic_callbacks(app):
         active_sliders = [
             slider for slider in sliders if not np.isclose(slider.get("gain", 1.0), 1.0)
         ]
+
+        scale_mode = "audiogram" if audiogram_active else "linear"
 
         if base_fft.size == 0 or not active_sliders:
             processed = original_signal
@@ -618,12 +631,19 @@ def register_generic_callbacks(app):
         if active_sliders:
             f, t, Sxx = _spectrogram_subset(processed, sample_rate, fft_module)
             spec_fig = create_spec_figure(f, t, Sxx)
-            freq_fig = _create_frequency_figure(modified_fft, sample_rate)
+            freqs, mags = _fft_to_freq_arrays(modified_fft, sample_rate)
+            freq_payload = {"frequencies": freqs, "magnitudes": mags}
+            freq_fig = create_freq_figure(freqs, mags, use_db=True, scale_mode=scale_mode) if freqs else no_update
         else:
             spec_fig = copy.deepcopy(original_spec_fig) if original_spec_fig else create_spec_figure(*_spectrogram_subset(original_signal, sample_rate, fft_module))
-            freq_fig = copy.deepcopy(original_freq_fig) if original_freq_fig else _create_frequency_figure(base_fft, sample_rate)
+            freqs, mags = _fft_to_freq_arrays(base_fft, sample_rate)
+            freq_payload = {"frequencies": freqs, "magnitudes": mags}
+            if original_freq_fig and scale_mode == "linear":
+                freq_fig = copy.deepcopy(original_freq_fig)
+            else:
+                freq_fig = create_freq_figure(freqs, mags, use_db=True, scale_mode=scale_mode) if freqs else no_update
 
-        return processed_data, spec_fig, freq_fig
+        return processed_data, spec_fig, freq_fig, freq_payload
 
     @app.callback(
         Output("audio-player-before", "src", allow_duplicate=True),

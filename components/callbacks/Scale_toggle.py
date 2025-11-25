@@ -9,7 +9,10 @@ while not os.path.exists(os.path.join(current, 'assets')):
 if current not in sys.path:
     sys.path.insert(0, current)
 
-from dash import Input, Output, callback_context, ALL
+from dash import Input, Output, State, callback_context, ALL
+from dash.exceptions import PreventUpdate
+
+from components.layouts.freq_fig import create_freq_figure
 
 def register_Scale_toggle(app):
     @app.callback(
@@ -39,3 +42,29 @@ def register_Scale_toggle(app):
         else:
             # Audiogram is active
             return False, True, "secondary", "primary", True, False
+
+    @app.callback(
+        Output('frequency-domain', 'figure', allow_duplicate=True),
+        Input('scale-linear', 'n_clicks'),
+        Input('scale-audiogram', 'n_clicks'),
+        State('frequency-domain-data', 'data'),
+        prevent_initial_call=True
+    )
+    def redraw_frequency_figure(linear_clicks, audiogram_clicks, freq_data):
+        ctx = callback_context
+
+        if not ctx.triggered:
+            raise PreventUpdate
+
+        if not freq_data:
+            raise PreventUpdate
+
+        freqs = freq_data.get('frequencies') or []
+        mags = freq_data.get('magnitudes') or []
+        if not freqs or not mags:
+            raise PreventUpdate
+
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        scale_mode = 'linear' if button_id == 'scale-linear' else 'audiogram'
+
+        return create_freq_figure(freqs, mags, use_db=True, scale_mode=scale_mode)

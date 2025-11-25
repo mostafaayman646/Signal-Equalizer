@@ -29,14 +29,16 @@ def register_Upload_signal(app):
         Output('signal-data-store', 'data'),
         Output('spectrogram-pre', 'figure'),
         Output('frequency-domain', 'figure'),
+        Output('frequency-domain-data', 'data'),
         Input('upload-signal', 'contents'),
         State('upload-signal', 'filename'),
+        State('scale-audiogram', 'active'),
         prevent_initial_call=True
     )
-    def upload_signal(contents, filename):
+    def upload_signal(contents, filename, audiogram_active):
         """Load and display uploaded signal"""
         if not contents:
-            return no_update, no_update, no_update
+            return no_update, no_update, no_update, no_update
 
         try:
             # Decode and save temporarily
@@ -87,7 +89,8 @@ def register_Upload_signal(app):
             magnitudes = [abs(fft_result[k]) for k in range(num_bins)]
 
             # Create frequency figure (optimized)
-            freq_fig = create_freq_figure(frequencies, magnitudes, use_db=True)
+            scale_mode = 'audiogram' if audiogram_active else 'linear'
+            freq_fig = create_freq_figure(frequencies, magnitudes, use_db=True, scale_mode=scale_mode)
 
             # Create spectrogram (use full signal)
             f, t, Sxx = spectrogram(signal, sr, fft_module)
@@ -96,11 +99,16 @@ def register_Upload_signal(app):
             print(f"✓ Loaded: {filename} ({len(signal)} samples, {sr} Hz)")
             print(f"✓ FFT computed on {n_fft} samples for frequency plot")
 
-            return signal_data, spec_fig, freq_fig
+            freq_payload = {
+                'frequencies': frequencies,
+                'magnitudes': magnitudes,
+            }
+
+            return signal_data, spec_fig, freq_fig, freq_payload
             # return signal_data,freq_fig
 
         except Exception as e:
             print(f"✗ Error: {e}")
             import traceback
             traceback.print_exc()
-            return no_update, no_update, no_update
+            return no_update, no_update, no_update, no_update
