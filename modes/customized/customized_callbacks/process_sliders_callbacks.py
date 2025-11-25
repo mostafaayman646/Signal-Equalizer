@@ -5,84 +5,97 @@ Handles: Musical Instruments, Animal Sounds, Human Voices
 
 import os
 import sys
+import importlib
+import importlib.util
+import copy
 
 current = os.path.abspath(__file__)
 while not os.path.exists(os.path.join(current, 'assets')):
     current = os.path.dirname(current)
 
-# Add this!
 if current not in sys.path:
     sys.path.insert(0, current)
 
-from dash import Input, Output, State,no_update, ALL
+from dash import Input, Output, State, no_update, ALL
+from dash.exceptions import PreventUpdate
 import numpy as np
-import os
-import json
 
 from Utils import spectrogram
-from Utils.fft import ifft,time_to_frequency_linear
-from components.layout_builder import create_slider
-# from components.layouts import create_spec_figure,create_time_figure
 from components.layouts.spec_figure_layout import create_spec_figure
+from components.layouts.freq_fig import create_freq_figure
 from Utils.load_mode import load_mode_config
+
+from modes.generic.callbacks import _get_fft_module,_pad_signal_to_power_of_two,_build_cache_key,_spectrogram_subset,_create_frequency_figure
+
+# ============================================================================
+# Global Variables
+# ============================================================================
+
+_FFT_MODULE = None
+_FFT_CACHE = {}
+_PYD_RELATIVE = os.path.join(
+    "assets", "build", "lib.win-amd64-cpython-313", "fft_module.cp313-win_amd64.pyd"
+)
+_MAX_SPECTROGRAM_SAMPLES = 262_144
+
 # ============================================================================
 # Helper Functions
 # ============================================================================
+def _get_cached_fft(signal_data, fft_module, mode):
+    """Get or compute cached FFT for signal"""
+    key = f"{mode}-{_build_cache_key(signal_data)}"
+    cached = _FFT_CACHE.get(key)
+    if cached:
+        return cached
 
-def apply_scaling(fft_data, freq_map, slider_values, sr, length):
-    """Apply frequency scaling"""
-    full_fft = list(fft_data)
-    full_freq = np.fft.fftfreq(length, 1 / sr)
-    full_freq = np.abs(full_freq)
+    # Get original signal
+    original_signal = np.array(
+        signal_data.get("samples") or signal_data.get("signal"), dtype=float
+    )
+    
+    # Pad signal
+    padded_signal, fft_len = _pad_signal_to_power_of_two(original_signal)
+    if fft_len == 0:
+        cache_entry = {
+            "key": key,
+            "original_signal": original_signal,
+            "padded_signal": padded_signal,
+            "base_fft": np.array([]),
+            "freq_bins": np.array([]),
+            "original_spec_fig": None,
+            "original_freq_fig": None,
+        }
+        _FFT_CACHE[key] = cache_entry
+        return cache_entry
 
-    slider_ids = list(freq_map.keys())
+    # Compute FFT
+    signal_complex = [complex(x, 0) for x in padded_signal.tolist()]
+    fft_result = np.array(fft_module.fft(signal_complex), dtype=complex)
+    
+    # Compute frequency bins
+    sample_rate = signal_data["sample_rate"]
+    freq_bins = np.abs(np.fft.fftfreq(len(fft_result), 1 / sample_rate))
+    
+    # Create original visualizations
+    f, t, Sxx = _spectrogram_subset(original_signal, sample_rate, fft_module)
+    original_spec_fig = create_spec_figure(f, t, Sxx)
+    original_freq_fig = _create_frequency_figure(fft_result, sample_rate, allow_none=True)
 
-    for idx, slider_id in enumerate(slider_ids):
-        if idx >= len(slider_values):
-            break
+    cache_entry = {
+        "key": key,
+        "original_signal": original_signal,
+        "padded_signal": padded_signal,
+        "base_fft": fft_result,
+        "freq_bins": freq_bins,
+        "original_spec_fig": original_spec_fig,
+        "original_freq_fig": original_freq_fig,
+    }
+    _FFT_CACHE[key] = cache_entry
+    return cache_entry
 
-        scale = slider_values[idx]
-        if scale is None:
-            continue
-
-        for start_f, end_f in freq_map[slider_id]:
-            for i in range(len(full_fft)):
-                if start_f <= full_freq[i] <= end_f:
-                    full_fft[i] *= scale
-
-    return full_fft
 
 def load_frequency_map(mode):
     """Load frequency map for a customized mode"""
-    
-    # Define the modes that have dedicated files
-    # file_based_modes = ['Musical_Instruments', 'Animal_Sounds', 'Human_Voices']
-
-    # if mode in file_based_modes:
-    #     # Dynamically create filename based on mode
-    #     json_filename = f"Setting/{mode}_Frequency_Map.json"
-    #     json_path = os.path.join(os.path.dirname(__file__), json_filename)
-        
-    #     try:
-    #         with open(json_path, 'r') as f:
-    #             data = json.load(f)
-    #     except FileNotFoundError:
-    #         print(f"Error: Frequency map file not found at {json_path}")
-    #         return {}
-    #     except json.JSONDecodeError:
-    #         print(f"Error: Could not decode JSON from {json_path}")
-    #         return {}
-    
-    # elif mode == 'generic':
-    #     # Generic mode has no sliders/map
-    #     return {}
-    # else:
-    #     # Handle other potential modes or error
-    #     print(f"Warning: No frequency map defined for mode '{mode}'.")
-    #     return {}
-
-    # Data is now the root object for that mode, access 'sliders' directly
-    # sliders = data.get('sliders', [])
     sliders = load_mode_config(mode)
     freq_map = {}
 
@@ -92,94 +105,46 @@ def load_frequency_map(mode):
     return freq_map
 
 
+def _apply_bands(base_fft, freq_bins, freq_map, slider_values):
+    """Apply frequency scaling based on slider values"""
+    if not slider_values:
+        return np.array(base_fft, dtype=complex, copy=True)
+
+    fft_array = np.array(base_fft, dtype=complex, copy=True)
+    slider_ids = list(freq_map.keys())
+
+    for idx, slider_id in enumerate(slider_ids):
+        if idx >= len(slider_values):
+            break
+
+        gain = slider_values[idx]
+        if gain is None or np.isclose(gain, 1.0):
+            continue
+
+        ranges = freq_map.get(slider_id, [])
+        for band in ranges:
+            if not band or len(band) < 2:
+                continue
+            low, high = sorted([float(band[0]), float(band[1])])
+            mask = (freq_bins >= low) & (freq_bins <= high)
+            if not np.any(mask):
+                continue
+            fft_array[mask] *= gain
+
+    return fft_array
+
+
+# ============================================================================
+# Callback Registration
+# ============================================================================
+
 def register_customized_callbacks(app):
     """Register callbacks for customized modes"""
-
-    # ========================================================================
-    # CALLBACK: Update Content
-    # ========================================================================
-    
-    # @app.callback(
-    #     Output('sliders-container', 'children'),
-    #     Input('current-mode', 'data'),
-    #     prevent_initial_call=True
-    # )
-    # def update_sliders(mode):
-    #     """Updates sliders when mode changes"""
-    #     # if mode == 'generic':
-    #     #     return []
-    #
-    #     slider_configs = load_mode_config(mode)
-    #     sliders = [create_slider(config) for config in slider_configs]
-    #     return sliders
-    #
-    # ========================================================================
-    # CALLBACK: Process Signal with Sliders (Customized Modes Only)
-    # ========================================================================
-    # @app.callback(
-    #     Output('processed-signal-store', 'data'),
-    #     Output('time-domain-post', 'figure'),
-    #     Output('spectrogram-post', 'figure'),
-    #     Input({'type': 'equalizer-slider', 'index': ALL}, 'value'),
-    #     State('signal-data-store', 'data'),
-    #     State('current-mode', 'data'),
-    #     prevent_initial_call=True
-    # )
-    # def process_with_sliders(slider_values, signal_data, mode):
-    #     """Apply equalization based on slider values (for customized modes)"""
-    #
-    #     # Skip if generic mode (has its own processing)
-    #     if mode == 'generic' or not signal_data or not slider_values:
-    #         return no_update, no_update, no_update
-    #
-    #     try:
-    #         # Get signal
-    #         print(len(signal_data))
-    #         signal = np.array(signal_data['signal'])
-    #         sr = signal_data['sample_rate']
-    #
-    #         # Get frequency map
-    #         freq_map = load_frequency_map(mode)
-    #
-    #         # Process
-    #         fft_result = time_to_frequency_linear(signal.tolist(), float(sr))
-    #         modified_fft = apply_scaling(fft_result['full_fft'], freq_map, slider_values, sr, len(signal))
-    #
-    #         # Inverse FFT
-    #         processed = ifft(modified_fft)
-    #         processed = np.array([x.real for x in processed])[:len(signal)]
-    #
-    #         # Normalize
-    #         max_val = np.max(np.abs(processed))
-    #         if max_val > 1.0:
-    #             processed /= max_val
-    #
-    #         # Store
-    #         processed_data = {
-    #             'signal': processed.tolist(),
-    #             'sample_rate': sr
-    #         }
-    #
-    #         # Visualize
-    #         time = np.arange(len(processed)) / sr
-    #         time_fig = create_time_figure(time, processed, "Processed Signal")
-    #
-    #         f, t, Sxx = spectrogram(processed, sr)
-    #         spec_fig = create_spec_figure(f, t, Sxx)
-    #
-    #         print(f"✓ Processed with {len(slider_values)} sliders")
-    #
-    #         return processed_data, time_fig, spec_fig
-    #
-    #     except Exception as e:
-    #         print(f"✗ Processing error: {e}")
-    #         import traceback
-    #         traceback.print_exc()
-    #         return no_update, no_update, no_update
 
     @app.callback(
         Output('processed-signal-store', 'data'),
         Output('spectrogram-post', 'figure'),
+        Output('frequency-domain', 'figure', allow_duplicate=True),
         Input({'type': 'equalizer-slider', 'index': ALL}, 'value'),
         State('signal-data-store', 'data'),
         State('current-mode', 'data'),
@@ -190,67 +155,70 @@ def register_customized_callbacks(app):
 
         # Skip if generic mode or no data
         if mode == 'generic' or not signal_data or not slider_values:
-            return no_update, no_update
+            raise PreventUpdate
 
         try:
-            # Get signal - check both 'samples' and 'signal' keys
-            if 'samples' in signal_data:
-                signal = np.array(signal_data['samples'])
-            elif 'signal' in signal_data:
-                signal = np.array(signal_data['signal'])
-            else:
-                return no_update, no_update
+            # Get FFT module
+            fft_module = _get_fft_module()
+            
+            # Get cached FFT computation
+            cache_entry = _get_cached_fft(signal_data, fft_module, mode)
+            original_signal = cache_entry["original_signal"]
+            base_fft = cache_entry["base_fft"]
+            freq_bins = cache_entry["freq_bins"]
+            original_spec_fig = cache_entry.get("original_spec_fig")
+            original_freq_fig = cache_entry.get("original_freq_fig")
+            sample_rate = signal_data["sample_rate"]
 
-            sr = signal_data['sample_rate']
-
-            # Get frequency map
+            # Get frequency map for current mode
             freq_map = load_frequency_map(mode)
 
-            # Load FFT module
-            import sys
-            import importlib.util
-            current = os.path.abspath(__file__)
-            while not os.path.exists(os.path.join(current, 'assets')):
-                current = os.path.dirname(current)
-            pyd_file = os.path.join(current, 'assets', 'build', 'lib.win-amd64-cpython-313',
-                                    'fft_module.cp313-win_amd64.pyd')
-            spec = importlib.util.spec_from_file_location("fft_module", pyd_file)
-            fft_module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(fft_module)
+            # Check if any sliders are not at default (1.0)
+            active_sliders = [val for val in slider_values if not np.isclose(val, 1.0)]
 
-            # Process with FFT
-            signal_complex = [complex(x, 0) for x in signal.tolist()]
-            fft_result = fft_module.fft(signal_complex)
+            if base_fft.size == 0 or not active_sliders:
+                # No processing needed, use original
+                processed = original_signal
+                modified_fft = base_fft
+            else:
+                # Apply frequency scaling
+                modified_fft = _apply_bands(base_fft, freq_bins, freq_map, slider_values)
+                
+                # Inverse FFT
+                processed_complex = fft_module.ifft(modified_fft.tolist())
+                processed = np.array([x.real for x in processed_complex])[:len(original_signal)]
 
-            # Apply frequency scaling
-            modified_fft = apply_scaling(fft_result, freq_map, slider_values, sr, len(signal))
+            # Normalize if needed
+            if processed.size:
+                max_val = np.max(np.abs(processed))
+                if max_val > 1.0:
+                    processed = processed * (0.99 / max_val)
 
-            # Inverse FFT
-            processed_complex = fft_module.ifft(modified_fft)
-            processed = np.array([x.real for x in processed_complex])[:len(signal)]
-
-            # Normalize
-            max_val = np.max(np.abs(processed))
-            if max_val > 1.0:
-                processed /= max_val
-
-            # Store - IMPORTANT: Use 'samples' key for cine viewer!
+            # Store processed signal
+            processed_list = processed.astype(float).tolist()
             processed_data = {
-                'samples': processed.tolist(),  # Cine viewer needs 'samples'
-                'signal': processed.tolist(),  # Keep for backward compatibility
-                'sample_rate': sr
+                'samples': processed_list,
+                'signal': processed_list,
+                'sample_rate': sample_rate
             }
 
-            # Create spectrogram
-            f, t, Sxx = spectrogram(processed, sr)
-            spec_fig = create_spec_figure(f, t, Sxx)
+            # Create visualizations
+            if active_sliders:
+                # Recompute visualizations for modified signal
+                f, t, Sxx = _spectrogram_subset(processed, sample_rate, fft_module)
+                spec_fig = create_spec_figure(f, t, Sxx)
+                freq_fig = _create_frequency_figure(modified_fft, sample_rate)
+            else:
+                # Use cached original visualizations
+                spec_fig = copy.deepcopy(original_spec_fig) if original_spec_fig else create_spec_figure(*_spectrogram_subset(original_signal, sample_rate, fft_module))
+                freq_fig = copy.deepcopy(original_freq_fig) if original_freq_fig else _create_frequency_figure(base_fft, sample_rate)
 
-            print(f"✓ Processed with {len(slider_values)} sliders")
+            print(f"✓ Processed with {len(slider_values)} sliders ({len(active_sliders)} active)")
 
-            return processed_data, spec_fig
+            return processed_data, spec_fig, freq_fig
 
         except Exception as e:
             print(f"✗ Processing error: {e}")
             import traceback
             traceback.print_exc()
-            return no_update, no_update
+            raise PreventUpdate
