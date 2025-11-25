@@ -1,5 +1,6 @@
 """
 Signal Equalizer Pro - Main Application
+Updated with Tab-Based Layout
 """
 
 import dash
@@ -7,6 +8,7 @@ import dash_bootstrap_components as dbc
 
 # Import components and callbacks
 from components.layout_builder import create_app_layout, cine_viewer
+from components.tab_callbacks import register_tab_callbacks  # NEW
 
 from components.callbacks.Upload_signal import register_Upload_signal
 from components.callbacks.NavBar_Mode_Switch import register_mode_switch
@@ -20,7 +22,7 @@ from modes.customized.customized_callbacks.Render_Ai_models_callbacks import reg
 from modes.customized.customized_callbacks.Musical_Ai_model_callbacks import register_Musical_AiModel
 from modes.customized.customized_callbacks.Human_Ai_model_callbacks import register_Human_AiModel
 from modes.generic import register_generic_callbacks
-
+from modes.customized.customized_callbacks.AI_signal_processing import register_ai_signal_processing
 # Initialize App
 app = dash.Dash(
     __name__,
@@ -37,6 +39,7 @@ server = app.server
 app.layout = create_app_layout()
 
 # Register callbacks
+register_tab_callbacks(app)  # NEW - Must be first!
 cine_viewer.register_callbacks(app)
 register_Upload_signal(app)
 register_mode_switch(app)
@@ -49,18 +52,23 @@ register_ai_models(app)
 register_Musical_AiModel(app)
 register_Human_AiModel(app)
 register_generic_callbacks(app)
+register_ai_signal_processing(app)
 
 if __name__ == '__main__':
-    print("=" * 70)
-    print("🎵 SIGNAL EQUALIZER PRO")
-    print("=" * 70)
-    print("\n📍 Server: http://localhost:8050")
-    print("\n✨ Modes:")
-    print("   • Musical Instruments")
-    print("   • Animal Sounds")
-    print("   • Human Voices")
-    print("   • Generic Mode (custom subdivisions)")
-    print("\n" + "=" * 70 + "\n")
+    # print("=" * 70)
+    # print("🎵 SIGNAL EQUALIZER PRO - REDESIGNED")
+    # print("=" * 70)
+    # print("\n🌐 Server: http://localhost:8050")
+    # print("\n✨ Features:")
+    # print("   • Tab-Based Layout (Manual vs AI)")
+    # print("   • Compact Design")
+    # print("   • Animated Transitions")
+    # print("   • Side-by-Side Comparison")
+    # print("\n📊 Modes:")
+    # print("   • 🎸 Musical Instruments")
+    # print("   • 🐾 Animal Sounds")
+    # print("   • 🗣️ Human Voices")
+    # print("   • ⚙️ Generic Mode")
+    # print("\n" + "=" * 70 + "\n")
 
     app.run(debug=True, port=8050)
-
