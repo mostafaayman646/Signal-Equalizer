@@ -82,9 +82,6 @@ def to_audiogram_axes(
     max_freq = freq_arr.max()
     valid_octaves = _OCTAVE_FREQUENCIES[_OCTAVE_FREQUENCIES <= max_freq]
     
-    print(f"[AUDIOGRAM] freq_arr range: {freq_arr.min():.2f} - {freq_arr.max():.2f}")
-    print(f"[AUDIOGRAM] All octaves: {_OCTAVE_FREQUENCIES}")
-    print(f"[AUDIOGRAM] Valid octaves (within data range): {valid_octaves}")
     
     if len(valid_octaves) == 0:
         print("[AUDIOGRAM] No valid octaves found!")
@@ -98,11 +95,9 @@ def to_audiogram_axes(
         right=mag_arr[-1],
     )
     
-    print(f"[AUDIOGRAM] Before _db_to_hl: {interp_levels}")
     
     hl_levels = _db_to_hl(interp_levels)
     
-    print(f"[AUDIOGRAM] After _db_to_hl: {hl_levels}")
 
     category_labels = [_format_tick(freq) for freq in valid_octaves]
     hover_labels = [
