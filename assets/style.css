@@ -1,6 +1,665 @@
+/*!* ============================================================================*/
+/*   Signal Equalizer Pro - Enhanced Stylesheet*/
+/*   Compact, modern design with animations*/
+/*   ============================================================================ *!*/
+
+/*:root {*/
+/*    --primary-bg: #0a0e27;*/
+/*    --secondary-bg: #161b33;*/
+/*    --card-bg: #1e2442;*/
+/*    --accent-cyan: #00d9ff;*/
+/*    --accent-blue: #4a9eff;*/
+/*    --accent-purple: #b24bf3;*/
+/*    --text-primary: #ffffff;*/
+/*    --text-secondary: #8892b8;*/
+/*    --border-color: #2d3450;*/
+/*    --graph-bg: #12172e;*/
+/*    --success: #00ff88;*/
+/*    --warning: #ffb800;*/
+/*    --danger: #ff4757;*/
+/*}*/
+
+/** {*/
+/*    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;*/
+/*    box-sizing: border-box;*/
+/*}*/
+
+/*body {*/
+/*    background: linear-gradient(135deg, var(--primary-bg) 0%, #1a1f3a 100%);*/
+/*    color: var(--text-primary);*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    overflow-x: hidden;*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Navigation Bar - Sticky with glassmorphism*/
+/*   ============================================================================ *!*/
+
+/*.navbar {*/
+/*    background: rgba(22, 27, 51, 0.85) !important;*/
+/*    backdrop-filter: blur(10px);*/
+/*    border-bottom: 1px solid var(--border-color);*/
+/*    padding: 0.75rem 2rem;*/
+/*    position: sticky;*/
+/*    top: 0;*/
+/*    z-index: 1030;*/
+/*    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);*/
+/*    animation: slideDown 0.4s ease-out;*/
+/*}*/
+
+/*@keyframes slideDown {*/
+/*    from {*/
+/*        transform: translateY(-100%);*/
+/*        opacity: 0;*/
+/*    }*/
+/*    to {*/
+/*        transform: translateY(0);*/
+/*        opacity: 1;*/
+/*    }*/
+/*}*/
+
+/*.navbar-brand {*/
+/*    font-size: 1.4rem;*/
+/*    font-weight: 600;*/
+/*    letter-spacing: 0.5px;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    gap: 0.5rem;*/
+/*}*/
+
+/*.brand-pro {*/
+/*    color: var(--accent-cyan);*/
+/*    font-weight: 700;*/
+/*    text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Main Layout - Compact Grid System*/
+/*   ============================================================================ *!*/
+
+/*.main-app-content {*/
+/*    padding: 1rem;*/
+/*    max-width: 100%;*/
+/*    animation: fadeInUp 0.5s ease-out;*/
+/*}*/
+
+/*@keyframes fadeInUp {*/
+/*    from {*/
+/*        opacity: 0;*/
+/*        transform: translateY(20px);*/
+/*    }*/
+/*    to {*/
+/*        opacity: 1;*/
+/*        transform: translateY(0);*/
+/*    }*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Tab System - Modern Pills Design*/
+/*   ============================================================================ *!*/
+
+/*.mode-tabs {*/
+/*    background: var(--secondary-bg);*/
+/*    border-radius: 16px;*/
+/*    padding: 0.5rem;*/
+/*    margin-bottom: 1rem;*/
+/*    display: flex;*/
+/*    gap: 0.5rem;*/
+/*    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);*/
+/*    border: 1px solid var(--border-color);*/
+/*}*/
+
+/*.mode-tab {*/
+/*    flex: 1;*/
+/*    padding: 1rem 1.5rem;*/
+/*    background: transparent;*/
+/*    border: none;*/
+/*    border-radius: 12px;*/
+/*    color: var(--text-secondary);*/
+/*    font-weight: 600;*/
+/*    font-size: 0.95rem;*/
+/*    cursor: pointer;*/
+/*    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);*/
+/*    position: relative;*/
+/*    overflow: hidden;*/
+/*}*/
+
+/*.mode-tab::before {*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    right: 0;*/
+/*    bottom: 0;*/
+/*    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));*/
+/*    opacity: 0;*/
+/*    transition: opacity 0.3s ease;*/
+/*    z-index: -1;*/
+/*}*/
+
+/*.mode-tab:hover {*/
+/*    color: var(--text-primary);*/
+/*    transform: translateY(-2px);*/
+/*}*/
+
+/*.mode-tab.active {*/
+/*    color: var(--text-primary);*/
+/*    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));*/
+/*    box-shadow: 0 4px 15px rgba(0, 217, 255, 0.3);*/
+/*}*/
+
+/*.mode-tab.active::before {*/
+/*    opacity: 1;*/
+/*}*/
+
+/*!* Tab content animation *!*/
+/*.tab-content {*/
+/*    animation: fadeInContent 0.4s ease-out;*/
+/*}*/
+
+/*@keyframes fadeInContent {*/
+/*    from {*/
+/*        opacity: 0;*/
+/*        transform: translateX(-10px);*/
+/*    }*/
+/*    to {*/
+/*        opacity: 1;*/
+/*        transform: translateX(0);*/
+/*    }*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Compact Card System*/
+/*   ============================================================================ *!*/
+
+/*.app-card {*/
+/*    background: var(--card-bg);*/
+/*    border: 1px solid var(--border-color);*/
+/*    border-radius: 16px;*/
+/*    padding: 1.25rem;*/
+/*    margin-bottom: 1rem;*/
+/*    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);*/
+/*    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);*/
+/*    animation: cardFadeIn 0.5s ease-out backwards;*/
+/*}*/
+
+/*@keyframes cardFadeIn {*/
+/*    from {*/
+/*        opacity: 0;*/
+/*        transform: translateY(20px) scale(0.95);*/
+/*    }*/
+/*    to {*/
+/*        opacity: 1;*/
+/*        transform: translateY(0) scale(1);*/
+/*    }*/
+/*}*/
+
+/*.app-card:hover {*/
+/*    transform: translateY(-2px);*/
+/*    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);*/
+/*    border-color: var(--accent-cyan);*/
+/*}*/
+
+/*!* Stagger animation for multiple cards *!*/
+/*.app-card:nth-child(1) { animation-delay: 0.1s; }*/
+/*.app-card:nth-child(2) { animation-delay: 0.2s; }*/
+/*.app-card:nth-child(3) { animation-delay: 0.3s; }*/
+/*.app-card:nth-child(4) { animation-delay: 0.4s; }*/
+
+/*!* ============================================================================*/
+/*   Control Deck - Compact Layout*/
+/*   ============================================================================ *!*/
+
+/*.control-deck {*/
+/*    display: grid;*/
+/*    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));*/
+/*    gap: 1rem;*/
+/*    margin-bottom: 1rem;*/
+/*}*/
+
+/*.control-section {*/
+/*    background: var(--secondary-bg);*/
+/*    padding: 1rem;*/
+/*    border-radius: 12px;*/
+/*    border: 1px solid var(--border-color);*/
+/*    transition: all 0.3s ease;*/
+/*}*/
+
+/*.control-section:hover {*/
+/*    border-color: var(--accent-cyan);*/
+/*    box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Graph Container - Side by Side*/
+/*   ============================================================================ *!*/
+
+/*.graph-grid {*/
+/*    display: grid;*/
+/*    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));*/
+/*    gap: 1rem;*/
+/*    margin-bottom: 1rem;*/
+/*}*/
+
+/*.graph-container {*/
+/*    background: var(--graph-bg);*/
+/*    border-radius: 12px;*/
+/*    padding: 1rem;*/
+/*    border: 1px solid var(--border-color);*/
+/*    transition: all 0.3s ease;*/
+/*    position: relative;*/
+/*    overflow: hidden;*/
+/*}*/
+
+/*.graph-container::before {*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    top: -2px;*/
+/*    left: -2px;*/
+/*    right: -2px;*/
+/*    bottom: -2px;*/
+/*    background: linear-gradient(45deg, var(--accent-cyan), var(--accent-blue));*/
+/*    opacity: 0;*/
+/*    transition: opacity 0.3s ease;*/
+/*    z-index: -1;*/
+/*    border-radius: 12px;*/
+/*}*/
+
+/*.graph-container:hover::before {*/
+/*    opacity: 0.3;*/
+/*}*/
+
+/*.graph-header {*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    align-items: center;*/
+/*    margin-bottom: 0.75rem;*/
+/*}*/
+
+/*.graph-title {*/
+/*    color: var(--text-secondary);*/
+/*    font-size: 0.75rem;*/
+/*    font-weight: 700;*/
+/*    letter-spacing: 1.5px;*/
+/*    text-transform: uppercase;*/
+/*}*/
+
+/*.graph-badge {*/
+/*    padding: 0.25rem 0.75rem;*/
+/*    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));*/
+/*    border-radius: 20px;*/
+/*    font-size: 0.7rem;*/
+/*    font-weight: 700;*/
+/*    color: white;*/
+/*    box-shadow: 0 2px 8px rgba(0, 217, 255, 0.3);*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Equalizer Sliders - Compact Horizontal Layout*/
+/*   ============================================================================ *!*/
+
+/*.equalizer-section {*/
+/*    background: var(--card-bg);*/
+/*    padding: 1.5rem;*/
+/*    border-radius: 16px;*/
+/*    border: 1px solid var(--border-color);*/
+/*}*/
+
+/*.sliders-row {*/
+/*    display: flex;*/
+/*    justify-content: space-around;*/
+/*    align-items: flex-end;*/
+/*    gap: 1.5rem;*/
+/*    padding: 1.5rem 0;*/
+/*    overflow-x: auto;*/
+/*    scrollbar-width: thin;*/
+/*    scrollbar-color: var(--accent-cyan) var(--secondary-bg);*/
+/*}*/
+
+/*.sliders-row::-webkit-scrollbar {*/
+/*    height: 6px;*/
+/*}*/
+
+/*.sliders-row::-webkit-scrollbar-track {*/
+/*    background: var(--secondary-bg);*/
+/*    border-radius: 10px;*/
+/*}*/
+
+/*.sliders-row::-webkit-scrollbar-thumb {*/
+/*    background: var(--accent-cyan);*/
+/*    border-radius: 10px;*/
+/*}*/
+
+/*.slider-container {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    align-items: center;*/
+/*    gap: 0.75rem;*/
+/*    min-width: 80px;*/
+/*    animation: sliderPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) backwards;*/
+/*}*/
+
+/*@keyframes sliderPop {*/
+/*    from {*/
+/*        opacity: 0;*/
+/*        transform: translateY(30px) scale(0.8);*/
+/*    }*/
+/*    to {*/
+/*        opacity: 1;*/
+/*        transform: translateY(0) scale(1);*/
+/*    }*/
+/*}*/
+
+/*!* Stagger slider animations *!*/
+/*.slider-container:nth-child(1) { animation-delay: 0.1s; }*/
+/*.slider-container:nth-child(2) { animation-delay: 0.15s; }*/
+/*.slider-container:nth-child(3) { animation-delay: 0.2s; }*/
+/*.slider-container:nth-child(4) { animation-delay: 0.25s; }*/
+/*.slider-container:nth-child(5) { animation-delay: 0.3s; }*/
+/*.slider-container:nth-child(6) { animation-delay: 0.35s; }*/
+/*.slider-container:nth-child(7) { animation-delay: 0.4s; }*/
+/*.slider-container:nth-child(8) { animation-delay: 0.45s; }*/
+/*.slider-container:nth-child(9) { animation-delay: 0.5s; }*/
+/*.slider-container:nth-child(10) { animation-delay: 0.55s; }*/
+
+/*.equalizer-slider {*/
+/*    height: 140px;*/
+/*}*/
+
+/*.slider-icon {*/
+/*    width: 50px;*/
+/*    height: 50px;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    background: var(--secondary-bg);*/
+/*    border-radius: 50%;*/
+/*    border: 2px solid var(--border-color);*/
+/*    transition: all 0.3s ease;*/
+/*    font-size: 1.5rem;*/
+/*    color: var(--accent-cyan);*/
+/*}*/
+
+/*.slider-container:hover .slider-icon {*/
+/*    transform: scale(1.1) rotate(5deg);*/
+/*    border-color: var(--accent-cyan);*/
+/*    box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);*/
+/*}*/
+
+/*.slider-label {*/
+/*    color: var(--text-primary);*/
+/*    font-size: 0.8rem;*/
+/*    font-weight: 600;*/
+/*    text-align: center;*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Buttons - Enhanced with animations*/
+/*   ============================================================================ *!*/
+
+/*.btn {*/
+/*    border-radius: 8px;*/
+/*    font-weight: 600;*/
+/*    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);*/
+/*    position: relative;*/
+/*    overflow: hidden;*/
+/*}*/
+
+/*.btn::before {*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    top: 50%;*/
+/*    left: 50%;*/
+/*    width: 0;*/
+/*    height: 0;*/
+/*    border-radius: 50%;*/
+/*    background: rgba(255, 255, 255, 0.3);*/
+/*    transform: translate(-50%, -50%);*/
+/*    transition: width 0.6s, height 0.6s;*/
+/*}*/
+
+/*.btn:active::before {*/
+/*    width: 300px;*/
+/*    height: 300px;*/
+/*}*/
+
+/*.btn-primary {*/
+/*    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));*/
+/*    border: none;*/
+/*    box-shadow: 0 4px 15px rgba(0, 217, 255, 0.3);*/
+/*}*/
+
+/*.btn-primary:hover {*/
+/*    transform: translateY(-2px);*/
+/*    box-shadow: 0 6px 25px rgba(0, 217, 255, 0.5);*/
+/*}*/
+
+/*.btn-success {*/
+/*    background: linear-gradient(135deg, var(--success), #00cc6f);*/
+/*    border: none;*/
+/*}*/
+
+/*.btn-info {*/
+/*    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));*/
+/*    border: none;*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Upload Box - Drag & Drop Enhancement*/
+/*   ============================================================================ *!*/
+
+/*.upload-box {*/
+/*    background: var(--graph-bg);*/
+/*    border: 2px dashed var(--border-color);*/
+/*    border-radius: 12px;*/
+/*    padding: 2rem;*/
+/*    text-align: center;*/
+/*    cursor: pointer;*/
+/*    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);*/
+/*    color: var(--text-secondary);*/
+/*    position: relative;*/
+/*    overflow: hidden;*/
+/*}*/
+
+/*.upload-box::before {*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    top: -50%;*/
+/*    left: -50%;*/
+/*    width: 200%;*/
+/*    height: 200%;*/
+/*    background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, transparent 70%);*/
+/*    opacity: 0;*/
+/*    transition: opacity 0.3s ease;*/
+/*}*/
+
+/*.upload-box:hover {*/
+/*    background: var(--secondary-bg);*/
+/*    border-color: var(--accent-cyan);*/
+/*    color: var(--text-primary);*/
+/*    transform: scale(1.02);*/
+/*    box-shadow: 0 8px 30px rgba(0, 217, 255, 0.2);*/
+/*}*/
+
+/*.upload-box:hover::before {*/
+/*    opacity: 1;*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Section Headings*/
+/*   ============================================================================ *!*/
+
+/*.section-heading {*/
+/*    color: var(--text-secondary);*/
+/*    font-size: 0.75rem;*/
+/*    font-weight: 700;*/
+/*    letter-spacing: 2px;*/
+/*    margin-bottom: 1rem;*/
+/*    text-transform: uppercase;*/
+/*    position: relative;*/
+/*    padding-left: 1rem;*/
+/*}*/
+
+/*.section-heading::before {*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    left: 0;*/
+/*    top: 50%;*/
+/*    transform: translateY(-50%);*/
+/*    width: 4px;*/
+/*    height: 16px;*/
+/*    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));*/
+/*    border-radius: 2px;*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Loading States & Spinners*/
+/*   ============================================================================ *!*/
+
+/*.loading-overlay {*/
+/*    position: absolute;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    right: 0;*/
+/*    bottom: 0;*/
+/*    background: rgba(10, 14, 39, 0.9);*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    z-index: 1000;*/
+/*    animation: fadeIn 0.3s ease;*/
+/*}*/
+
+/*.spinner {*/
+/*    width: 50px;*/
+/*    height: 50px;*/
+/*    border: 4px solid var(--border-color);*/
+/*    border-top-color: var(--accent-cyan);*/
+/*    border-radius: 50%;*/
+/*    animation: spin 1s linear infinite;*/
+/*}*/
+
+/*@keyframes spin {*/
+/*    to { transform: rotate(360deg); }*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Comparison View - Split Screen*/
+/*   ============================================================================ *!*/
+
+/*.comparison-view {*/
+/*    display: grid;*/
+/*    grid-template-columns: 1fr 1fr;*/
+/*    gap: 1rem;*/
+/*    margin-bottom: 1rem;*/
+/*}*/
+
+/*.comparison-panel {*/
+/*    background: var(--card-bg);*/
+/*    border-radius: 16px;*/
+/*    padding: 1.5rem;*/
+/*    border: 2px solid var(--border-color);*/
+/*    transition: all 0.3s ease;*/
+/*}*/
+
+/*.comparison-panel.manual {*/
+/*    border-color: var(--accent-cyan);*/
+/*}*/
+
+/*.comparison-panel.ai {*/
+/*    border-color: var(--accent-purple);*/
+/*}*/
+
+/*.comparison-panel:hover {*/
+/*    transform: scale(1.01);*/
+/*    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Responsive Design*/
+/*   ============================================================================ *!*/
+
+/*@media (max-width: 1400px) {*/
+/*    .graph-grid {*/
+/*        grid-template-columns: 1fr;*/
+/*    }*/
+/*}*/
+
+/*@media (max-width: 992px) {*/
+/*    .comparison-view {*/
+/*        grid-template-columns: 1fr;*/
+/*    }*/
+
+/*    .sliders-row {*/
+/*        gap: 1rem;*/
+/*    }*/
+
+/*    .control-deck {*/
+/*        grid-template-columns: 1fr;*/
+/*    }*/
+/*}*/
+
+/*@media (max-width: 768px) {*/
+/*    .mode-tabs {*/
+/*        flex-direction: column;*/
+/*    }*/
+
+/*    .sliders-row {*/
+/*        justify-content: flex-start;*/
+/*    }*/
+
+/*    .navbar {*/
+/*        padding: 0.5rem 1rem;*/
+/*    }*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Smooth Scrollbar*/
+/*   ============================================================================ *!*/
+
+/*::-webkit-scrollbar {*/
+/*    width: 10px;*/
+/*    height: 10px;*/
+/*}*/
+
+/*::-webkit-scrollbar-track {*/
+/*    background: var(--secondary-bg);*/
+/*}*/
+
+/*::-webkit-scrollbar-thumb {*/
+/*    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));*/
+/*    border-radius: 10px;*/
+/*}*/
+
+/*::-webkit-scrollbar-thumb:hover {*/
+/*    background: var(--accent-cyan);*/
+/*}*/
+
+/*!* ============================================================================*/
+/*   Utility Classes*/
+/*   ============================================================================ *!*/
+
+/*.text-cyan { color: var(--accent-cyan); }*/
+/*.text-purple { color: var(--accent-purple); }*/
+/*.glow-cyan { text-shadow: 0 0 10px rgba(0, 217, 255, 0.5); }*/
+/*.pulse {*/
+/*    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;*/
+/*}*/
+
+/*@keyframes pulse {*/
+/*    0%, 100% { opacity: 1; }*/
+/*    50% { opacity: 0.5; }*/
+/*}*/
+
+/*.hidden { display: none; }*/
+/*.visible { display: block; }*/
+
+
+
 /* ============================================================================
-   Signal Equalizer Pro - Enhanced Stylesheet
-   Compact, modern design with animations
+   Signal Equalizer Pro - Compact Professional Design with Animations
+   Minimalist layout optimized for minimal scrolling with smooth transitions
    ============================================================================ */
 
 :root {
@@ -17,6 +676,8 @@
     --success: #00ff88;
     --warning: #ffb800;
     --danger: #ff4757;
+    --compact-padding: 0.5rem;
+    --compact-margin: 0.25rem;
 }
 
 * {
@@ -33,18 +694,18 @@ body {
 }
 
 /* ============================================================================
-   Navigation Bar - Sticky with glassmorphism
+   Compact Navigation Bar with Animation
    ============================================================================ */
 
 .navbar {
-    background: rgba(22, 27, 51, 0.85) !important;
+    background: rgba(22, 27, 51, 0.95) !important;
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
-    padding: 0.75rem 2rem;
+    padding: 0.4rem 1rem !important;
     position: sticky;
     top: 0;
     z-index: 1030;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     animation: slideDown 0.4s ease-out;
 }
 
@@ -60,7 +721,7 @@ body {
 }
 
 .navbar-brand {
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     font-weight: 600;
     letter-spacing: 0.5px;
     display: flex;
@@ -72,14 +733,24 @@ body {
     color: var(--accent-cyan);
     font-weight: 700;
     text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+    animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% {
+        text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+    }
+    50% {
+        text-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+    }
 }
 
 /* ============================================================================
-   Main Layout - Compact Grid System
+   Compact Main Layout - No Wasted Space
    ============================================================================ */
 
 .main-app-content {
-    padding: 1rem;
+    padding: 0.5rem;
     max-width: 100%;
     animation: fadeInUp 0.5s ease-out;
 }
@@ -96,29 +767,815 @@ body {
 }
 
 /* ============================================================================
-   Tab System - Modern Pills Design
+   Collapsible Control Deck with Smooth Transitions
+   ============================================================================ */
+
+.control-deck-toggle {
+    width: 100%;
+    background: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.control-deck-toggle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.control-deck-toggle:hover::before {
+    left: 100%;
+}
+
+.control-deck-toggle:hover {
+    background: var(--card-bg);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.control-deck-toggle i {
+    transition: transform 0.3s ease;
+}
+
+.control-deck-toggle.collapsed i {
+    transform: rotate(-180deg);
+}
+
+.control-deck-container {
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease,
+                margin 0.3s ease;
+}
+
+.control-deck-container.hidden {
+    max-height: 0 !important;
+    opacity: 0;
+    margin-bottom: 0;
+}
+
+.control-deck-container.visible {
+    max-height: 200px;
+    opacity: 1;
+    margin-bottom: 0.5rem;
+    animation: slideDown 0.3s ease-out;
+}
+
+/* ============================================================================
+   Compact Cards - Minimal Padding with Animations
+   ============================================================================ */
+
+.app-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: cardFadeIn 0.5s ease-out backwards;
+}
+
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.app-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    border-color: rgba(0, 217, 255, 0.3);
+}
+
+/* Stagger animation for multiple cards */
+.app-card:nth-child(1) { animation-delay: 0.1s; }
+.app-card:nth-child(2) { animation-delay: 0.2s; }
+.app-card:nth-child(3) { animation-delay: 0.3s; }
+.app-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* ============================================================================
+   Two-Column Layout: Sliders Left + Frequency Right
+   ============================================================================ */
+
+.main-equalizer-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    align-items: start;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.sliders-column {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-width: 200px;
+    max-width: 300px;
+    transition: all 0.3s ease;
+}
+
+.sliders-column:hover {
+    border-color: rgba(0, 217, 255, 0.5);
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);
+}
+
+.frequency-column {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-height: 250px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.frequency-column::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--accent-cyan), var(--accent-blue));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: 8px;
+}
+
+.frequency-column:hover::before {
+    opacity: 0.3;
+}
+/* ============================================================================
+   Compact Slider Design with Animations - FIXED SIZING
+   ============================================================================ */
+
+.sliders-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem 0.5rem;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    background: var(--secondary-bg);
+    border-radius: 6px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: sliderPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) backwards;
+    min-height: 50px;
+}
+
+@keyframes sliderPop {
+    from {
+        opacity: 0;
+        transform: translateX(-30px) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+/* Stagger slider animations */
+.slider-container:nth-child(1) { animation-delay: 0.05s; }
+.slider-container:nth-child(2) { animation-delay: 0.1s; }
+.slider-container:nth-child(3) { animation-delay: 0.15s; }
+.slider-container:nth-child(4) { animation-delay: 0.2s; }
+.slider-container:nth-child(5) { animation-delay: 0.25s; }
+.slider-container:nth-child(6) { animation-delay: 0.3s; }
+.slider-container:nth-child(7) { animation-delay: 0.35s; }
+.slider-container:nth-child(8) { animation-delay: 0.4s; }
+.slider-container:nth-child(9) { animation-delay: 0.45s; }
+.slider-container:nth-child(10) { animation-delay: 0.5s; }
+
+.slider-container:hover {
+    background: var(--card-bg);
+    transform: translateX(5px);
+    box-shadow: 0 2px 10px rgba(0, 217, 255, 0.2);
+}
+
+.slider-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--graph-bg);
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    font-size: 1.2rem;
+    color: var(--accent-cyan);
+    transition: all 0.3s ease;
+}
+
+.slider-container:hover .slider-icon {
+    transform: scale(1.1) rotate(5deg);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+}
+
+.slider-label {
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 70px;
+    max-width: 90px;
+    transition: color 0.3s ease;
+    line-height: 1.2;
+}
+
+.slider-container:hover .slider-label {
+    color: var(--accent-cyan);
+}
+
+/* Horizontal slider styling */
+.equalizer-slider {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* Dash slider specific overrides for horizontal layout */
+.equalizer-slider .rc-slider {
+    height: 8px !important;
+    padding: 5px 0 !important;
+}
+
+.equalizer-slider .rc-slider-rail {
+    height: 8px !important;
+    background: var(--border-color) !important;
+    border-radius: 4px !important;
+}
+
+.equalizer-slider .rc-slider-track {
+    height: 8px !important;
+    background: linear-gradient(to right, var(--accent-cyan), var(--accent-blue)) !important;
+    border-radius: 4px !important;
+}
+
+.equalizer-slider .rc-slider-handle {
+    width: 20px !important;
+    height: 20px !important;
+    margin-top: -6px !important;
+    border: 3px solid var(--accent-cyan) !important;
+    background-color: var(--primary-bg) !important;
+    box-shadow: 0 2px 8px rgba(0, 217, 255, 0.4) !important;
+}
+
+.equalizer-slider .rc-slider-handle:hover,
+.equalizer-slider .rc-slider-handle:active {
+    border-color: var(--accent-blue) !important;
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.6) !important;
+}
+
+.equalizer-slider .rc-slider-mark {
+    top: 20px !important;
+    font-size: 0.7rem !important;
+}
+
+.equalizer-slider .rc-slider-mark-text {
+    color: var(--text-secondary) !important;
+}
+
+/* ============================================================================
+   Generic Mode Slider Layout - FIXED
+   ============================================================================ */
+
+.sliders-column .generic-controls-area {
+    width: 100%;
+}
+
+.sliders-column #generic-sliders-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Empty state styling */
+.sliders-row > div[style*="display: flex"][style*="flexDirection: column"][style*="justifyContent: center"] {
+    min-height: 150px;
+    padding: 2rem 1rem;
+}
+
+/*!* ============================================================================*/
+/*   Compact Slider Design with Animations*/
+/*   ============================================================================ *!*/
+
+/*.sliders-row {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    gap: 0.5rem;*/
+/*    padding: 0.5rem 0;*/
+/*}*/
+
+/*.slider-container {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    gap: 0.5rem;*/
+/*    padding: 0.25rem;*/
+/*    background: var(--secondary-bg);*/
+/*    border-radius: 6px;*/
+/*    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);*/
+/*    animation: sliderPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) backwards;*/
+/*}*/
+
+/*@keyframes sliderPop {*/
+/*    from {*/
+/*        opacity: 0;*/
+/*        transform: translateX(-30px) scale(0.8);*/
+/*    }*/
+/*    to {*/
+/*        opacity: 1;*/
+/*        transform: translateX(0) scale(1);*/
+/*    }*/
+/*}*/
+
+/*!* Stagger slider animations *!*/
+/*.slider-container:nth-child(1) { animation-delay: 0.1s; }*/
+/*.slider-container:nth-child(2) { animation-delay: 0.15s; }*/
+/*.slider-container:nth-child(3) { animation-delay: 0.2s; }*/
+/*.slider-container:nth-child(4) { animation-delay: 0.25s; }*/
+/*.slider-container:nth-child(5) { animation-delay: 0.3s; }*/
+/*.slider-container:nth-child(6) { animation-delay: 0.35s; }*/
+/*.slider-container:nth-child(7) { animation-delay: 0.4s; }*/
+/*.slider-container:nth-child(8) { animation-delay: 0.45s; }*/
+/*.slider-container:nth-child(9) { animation-delay: 0.5s; }*/
+/*.slider-container:nth-child(10) { animation-delay: 0.55s; }*/
+
+/*.slider-container:hover {*/
+/*    background: var(--card-bg);*/
+/*    transform: translateX(5px);*/
+/*    box-shadow: 0 2px 10px rgba(0, 217, 255, 0.2);*/
+/*}*/
+
+/*.slider-icon {*/
+/*    width: 35px;*/
+/*    height: 35px;*/
+/*    min-width: 35px;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    background: var(--graph-bg);*/
+/*    border-radius: 50%;*/
+/*    border: 1px solid var(--border-color);*/
+/*    font-size: 1.1rem;*/
+/*    color: var(--accent-cyan);*/
+/*    transition: all 0.3s ease;*/
+/*}*/
+
+/*.slider-container:hover .slider-icon {*/
+/*    transform: scale(1.1) rotate(5deg);*/
+/*    border-color: var(--accent-cyan);*/
+/*    box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);*/
+/*}*/
+
+/*.slider-label {*/
+/*    color: var(--text-primary);*/
+/*    font-size: 0.75rem;*/
+/*    font-weight: 600;*/
+/*    min-width: 60px;*/
+/*    max-width: 80px;*/
+/*    transition: color 0.3s ease;*/
+/*}*/
+
+/*.slider-container:hover .slider-label {*/
+/*    color: var(--accent-cyan);*/
+/*}*/
+
+/*.equalizer-slider {*/
+/*    flex: 1;*/
+/*}*/
+
+/* ============================================================================
+   Compact Time Domain Section with Animations
+   ============================================================================ */
+
+.time-domain-compact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.time-graph-container {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.time-graph-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(0, 217, 255, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.time-graph-container:hover::before {
+    opacity: 1;
+}
+
+.time-graph-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border-color: var(--accent-cyan);
+}
+
+.time-graph-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: border-color 0.3s ease;
+}
+
+.time-graph-container:hover .time-graph-header {
+    border-color: var(--accent-cyan);
+}
+
+.graph-title-compact {
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+}
+
+.time-graph-container:hover .graph-title-compact {
+    color: var(--accent-cyan);
+}
+
+.graph-badge-compact {
+    padding: 0.15rem 0.5rem;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    border-radius: 12px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 217, 255, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 2px 8px rgba(0, 217, 255, 0.3);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 4px 15px rgba(0, 217, 255, 0.6);
+        transform: scale(1.05);
+    }
+}
+
+/* ============================================================================
+   Cine Controls - Compact Version with Animations
+   ============================================================================ */
+
+.cine-controls-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem;
+    background: var(--secondary-bg);
+    border-radius: 6px;
+    margin-top: 0.5rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.cine-controls-compact:hover {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+}
+
+.cine-controls-compact .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.cine-controls-compact .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 217, 255, 0.4);
+}
+
+/* ============================================================================
+   Compact Spectrogram Section with Animations
+   ============================================================================ */
+
+.spectrogram-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    animation: fadeIn 0.7s ease-out;
+}
+
+.spec-container {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem;
+    width: 100%;
+    min-width: 0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.spec-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.spec-container:hover::before {
+    left: 100%;
+}
+
+.spec-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border-color: var(--accent-cyan);
+}
+
+/* ============================================================================
+   Section Headings - Compact with Animations
+   ============================================================================ */
+
+.section-heading-compact {
+    color: var(--text-secondary);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    padding-left: 0.5rem;
+    position: relative;
+    animation: slideInLeft 0.4s ease-out;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.section-heading-compact::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 12px;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    border-radius: 2px;
+    animation: expand 0.3s ease-out;
+}
+
+@keyframes expand {
+    from {
+        height: 0;
+    }
+    to {
+        height: 12px;
+    }
+}
+
+/* ============================================================================
+   Control Section - Minimal Padding with Hover Effects
+   ============================================================================ */
+
+.control-section {
+    background: var(--secondary-bg);
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.control-section:hover {
+    border-color: rgba(0, 217, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.1);
+}
+
+/* ============================================================================
+   Compact Upload Box with Animations
+   ============================================================================ */
+
+.upload-box {
+    background: var(--graph-bg);
+    border: 2px dashed var(--border-color);
+    border-radius: 6px;
+    padding: 0.8rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-box::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.upload-box:hover::before {
+    opacity: 1;
+}
+
+.upload-box:hover {
+    background: var(--secondary-bg);
+    border-color: var(--accent-cyan);
+    color: var(--text-primary);
+    transform: scale(1.02);
+    box-shadow: 0 4px 20px rgba(0, 217, 255, 0.2);
+}
+
+/* ============================================================================
+   Compact Buttons with Ripple Effect
+   ============================================================================ */
+
+.btn-sm {
+    padding: 0.25rem 0.6rem !important;
+    font-size: 0.75rem !important;
+}
+
+.btn {
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 217, 255, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 217, 255, 0.5);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success), #00cc6f);
+    border: none;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+    border: none;
+}
+
+/* ============================================================================
+   Graph Height Optimization
+   ============================================================================ */
+
+.frequency-graph-compact {
+    height: 250px !important;
+    min-height: 250px !important;
+}
+
+.time-graph-compact {
+    height: 200px !important;
+    min-height: 200px !important;
+}
+
+.spec-graph-compact {
+    height: 220px !important;
+    min-height: 220px !important;
+    width: 100% !important;
+}
+
+/* Ensure graphs take full width of container */
+#spectrogram-pre, #spectrogram-post {
+    width: 100% !important;
+}
+
+.spec-container > div {
+    width: 100% !important;
+}
+
+.spec-graph-compact .js-plotly-plot,
+.spec-graph-compact .plotly,
+.spec-graph-compact .plot-container {
+    width: 100% !important;
+}
+
+/* ============================================================================
+   Tab System - Compact with Animations
    ============================================================================ */
 
 .mode-tabs {
     background: var(--secondary-bg);
-    border-radius: 16px;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
+    border-radius: 8px;
+    padding: 0.3rem;
+    margin-bottom: 0.5rem;
     display: flex;
-    gap: 0.5rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    gap: 0.3rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     border: 1px solid var(--border-color);
+    animation: fadeIn 0.3s ease-out;
 }
 
 .mode-tab {
     flex: 1;
-    padding: 1rem 1.5rem;
+    padding: 0.5rem 1rem;
     background: transparent;
     border: none;
-    border-radius: 12px;
+    border-radius: 6px;
     color: var(--text-secondary);
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
@@ -170,350 +1627,6 @@ body {
 }
 
 /* ============================================================================
-   Compact Card System
-   ============================================================================ */
-
-.app-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: cardFadeIn 0.5s ease-out backwards;
-}
-
-@keyframes cardFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.app-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-    border-color: var(--accent-cyan);
-}
-
-/* Stagger animation for multiple cards */
-.app-card:nth-child(1) { animation-delay: 0.1s; }
-.app-card:nth-child(2) { animation-delay: 0.2s; }
-.app-card:nth-child(3) { animation-delay: 0.3s; }
-.app-card:nth-child(4) { animation-delay: 0.4s; }
-
-/* ============================================================================
-   Control Deck - Compact Layout
-   ============================================================================ */
-
-.control-deck {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.control-section {
-    background: var(--secondary-bg);
-    padding: 1rem;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    transition: all 0.3s ease;
-}
-
-.control-section:hover {
-    border-color: var(--accent-cyan);
-    box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);
-}
-
-/* ============================================================================
-   Graph Container - Side by Side
-   ============================================================================ */
-
-.graph-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.graph-container {
-    background: var(--graph-bg);
-    border-radius: 12px;
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.graph-container::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, var(--accent-cyan), var(--accent-blue));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
-    border-radius: 12px;
-}
-
-.graph-container:hover::before {
-    opacity: 0.3;
-}
-
-.graph-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-}
-
-.graph-title {
-    color: var(--text-secondary);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-}
-
-.graph-badge {
-    padding: 0.25rem 0.75rem;
-    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: white;
-    box-shadow: 0 2px 8px rgba(0, 217, 255, 0.3);
-}
-
-/* ============================================================================
-   Equalizer Sliders - Compact Horizontal Layout
-   ============================================================================ */
-
-.equalizer-section {
-    background: var(--card-bg);
-    padding: 1.5rem;
-    border-radius: 16px;
-    border: 1px solid var(--border-color);
-}
-
-.sliders-row {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-    gap: 1.5rem;
-    padding: 1.5rem 0;
-    overflow-x: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--accent-cyan) var(--secondary-bg);
-}
-
-.sliders-row::-webkit-scrollbar {
-    height: 6px;
-}
-
-.sliders-row::-webkit-scrollbar-track {
-    background: var(--secondary-bg);
-    border-radius: 10px;
-}
-
-.sliders-row::-webkit-scrollbar-thumb {
-    background: var(--accent-cyan);
-    border-radius: 10px;
-}
-
-.slider-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-    min-width: 80px;
-    animation: sliderPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) backwards;
-}
-
-@keyframes sliderPop {
-    from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-/* Stagger slider animations */
-.slider-container:nth-child(1) { animation-delay: 0.1s; }
-.slider-container:nth-child(2) { animation-delay: 0.15s; }
-.slider-container:nth-child(3) { animation-delay: 0.2s; }
-.slider-container:nth-child(4) { animation-delay: 0.25s; }
-.slider-container:nth-child(5) { animation-delay: 0.3s; }
-.slider-container:nth-child(6) { animation-delay: 0.35s; }
-.slider-container:nth-child(7) { animation-delay: 0.4s; }
-.slider-container:nth-child(8) { animation-delay: 0.45s; }
-.slider-container:nth-child(9) { animation-delay: 0.5s; }
-.slider-container:nth-child(10) { animation-delay: 0.55s; }
-
-.equalizer-slider {
-    height: 140px;
-}
-
-.slider-icon {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--secondary-bg);
-    border-radius: 50%;
-    border: 2px solid var(--border-color);
-    transition: all 0.3s ease;
-    font-size: 1.5rem;
-    color: var(--accent-cyan);
-}
-
-.slider-container:hover .slider-icon {
-    transform: scale(1.1) rotate(5deg);
-    border-color: var(--accent-cyan);
-    box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
-}
-
-.slider-label {
-    color: var(--text-primary);
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-align: center;
-}
-
-/* ============================================================================
-   Buttons - Enhanced with animations
-   ============================================================================ */
-
-.btn {
-    border-radius: 8px;
-    font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.btn:active::before {
-    width: 300px;
-    height: 300px;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-    border: none;
-    box-shadow: 0 4px 15px rgba(0, 217, 255, 0.3);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(0, 217, 255, 0.5);
-}
-
-.btn-success {
-    background: linear-gradient(135deg, var(--success), #00cc6f);
-    border: none;
-}
-
-.btn-info {
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
-    border: none;
-}
-
-/* ============================================================================
-   Upload Box - Drag & Drop Enhancement
-   ============================================================================ */
-
-.upload-box {
-    background: var(--graph-bg);
-    border: 2px dashed var(--border-color);
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: var(--text-secondary);
-    position: relative;
-    overflow: hidden;
-}
-
-.upload-box::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.upload-box:hover {
-    background: var(--secondary-bg);
-    border-color: var(--accent-cyan);
-    color: var(--text-primary);
-    transform: scale(1.02);
-    box-shadow: 0 8px 30px rgba(0, 217, 255, 0.2);
-}
-
-.upload-box:hover::before {
-    opacity: 1;
-}
-
-/* ============================================================================
-   Section Headings
-   ============================================================================ */
-
-.section-heading {
-    color: var(--text-secondary);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-    position: relative;
-    padding-left: 1rem;
-}
-
-.section-heading::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 16px;
-    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-    border-radius: 2px;
-}
-
-/* ============================================================================
    Loading States & Spinners
    ============================================================================ */
 
@@ -545,82 +1658,42 @@ body {
 }
 
 /* ============================================================================
-   Comparison View - Split Screen
+   Responsive Adjustments with Transitions
    ============================================================================ */
 
-.comparison-view {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.comparison-panel {
-    background: var(--card-bg);
-    border-radius: 16px;
-    padding: 1.5rem;
-    border: 2px solid var(--border-color);
-    transition: all 0.3s ease;
-}
-
-.comparison-panel.manual {
-    border-color: var(--accent-cyan);
-}
-
-.comparison-panel.ai {
-    border-color: var(--accent-purple);
-}
-
-.comparison-panel:hover {
-    transform: scale(1.01);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-}
-
-/* ============================================================================
-   Responsive Design
-   ============================================================================ */
-
-@media (max-width: 1400px) {
-    .graph-grid {
+@media (max-width: 1200px) {
+    .main-equalizer-row {
         grid-template-columns: 1fr;
     }
-}
 
-@media (max-width: 992px) {
-    .comparison-view {
-        grid-template-columns: 1fr;
+    .sliders-column {
+        max-width: 100%;
     }
 
     .sliders-row {
-        gap: 1rem;
-    }
-
-    .control-deck {
-        grid-template-columns: 1fr;
+        flex-direction: row;
+        overflow-x: auto;
     }
 }
 
 @media (max-width: 768px) {
-    .mode-tabs {
-        flex-direction: column;
+    .time-domain-compact,
+    .spectrogram-row {
+        grid-template-columns: 1fr;
     }
 
-    .sliders-row {
-        justify-content: flex-start;
-    }
-
-    .navbar {
-        padding: 0.5rem 1rem;
+    .control-deck-container.visible {
+        max-height: 400px;
     }
 }
 
 /* ============================================================================
-   Smooth Scrollbar
+   Scrollbar - Minimal with Animations
    ============================================================================ */
 
 ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -629,7 +1702,8 @@ body {
 
 ::-webkit-scrollbar-thumb {
     background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-    border-radius: 10px;
+    border-radius: 3px;
+    transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -640,597 +1714,25 @@ body {
    Utility Classes
    ============================================================================ */
 
+.no-padding { padding: 0 !important; }
+.no-margin { margin: 0 !important; }
+.compact-gap { gap: 0.25rem !important; }
+.hidden { display: none !important; }
+.visible { display: block !important; }
 .text-cyan { color: var(--accent-cyan); }
 .text-purple { color: var(--accent-purple); }
 .glow-cyan { text-shadow: 0 0 10px rgba(0, 217, 255, 0.5); }
+
+/* Pulse animation utility */
 .pulse {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+/* Hover lift effect */
+.hover-lift {
+    transition: transform 0.3s ease;
 }
 
-.hidden { display: none; }
-.visible { display: block; }
-
-
-
-
-
-
-
-/* ============================================================================
-   Signal Equalizer Pro - Main Stylesheet
-   Dark theme matching the provided design mockups
-   ============================================================================ */
-
-/*:root {*/
-/*    --primary-bg: #1a1d2e;*/
-/*    --secondary-bg: #252837;*/
-/*    --sidebar-bg: #1e2230; !* Re-using for card backgrounds *!*/
-/*    --accent-cyan: #00d9ff;*/
-/*    --accent-blue: #4a9eff;*/
-/*    --text-primary: #ffffff;*/
-/*    --text-secondary: #a0a4b8;*/
-/*    --border-color: #2d3142;*/
-/*    --graph-bg: #161821;*/
-/*}*/
-
-/** {*/
-/*    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
-/*}*/
-
-/*body {*/
-/*    background-color: var(--primary-bg);*/
-/*    color: var(--text-primary);*/
-/*    margin: 0;*/
-/*    padding: 0;*/
-/*}*/
-
-/*.app-container {*/
-/*    background-color: var(--primary-bg);*/
-/*    min-height: 100vh;*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Navigation Bar*/
-/*   ============================================================================ *!*/
-
-/*.navbar {*/
-/*    background-color: var(--secondary-bg) !important;*/
-/*    border-bottom: 1px solid var(--border-color);*/
-/*    padding: 1rem 2rem;*/
-/*    position: sticky; !* Make navbar sticky *!*/
-/*    top: 0;*/
-/*    z-index: 1020;*/
-/*}*/
-
-/*.navbar-brand {*/
-/*    font-size: 1.3rem;*/
-/*    font-weight: 300;*/
-/*    letter-spacing: 1px;*/
-/*}*/
-
-/*.brand-pro {*/
-/*    color: var(--accent-cyan);*/
-/*    font-weight: 700;*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Sidebar (REMOVED) & Main Content (MODIFIED)*/
-/*   ============================================================================ *!*/
-
-/*!* REMOVED .sidebar and .main-content rules *!*/
-
-/*.main-app-content {*/
-/*    padding: 1.5rem;*/
-/*}*/
-
-/*!* NEW CARD STYLE*/
-/*   This is the "floating rounded border" block style you requested.*/
-/**!*/
-/*.app-card {*/
-/*    background-color: var(--secondary-bg); !* Use secondary background *!*/
-/*    border: 1px solid var(--border-color);*/
-/*    border-radius: 12px; !* Softer radius *!*/
-/*    padding: 1.5rem;*/
-/*    margin-bottom: 1.5rem;*/
-/*    !* This creates the "floating" effect *!*/
-/*    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);*/
-/*    transition: all 0.3s ease;*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Sidebar-related components (now in Control Deck)*/
-/*   ============================================================================ *!*/
-
-/*.sidebar-heading {*/
-/*    color: var(--text-secondary);*/
-/*    font-size: 0.75rem;*/
-/*    font-weight: 600;*/
-/*    letter-spacing: 1.5px;*/
-/*    margin-bottom: 1rem;*/
-/*    text-transform: uppercase;*/
-/*}*/
-
-/*.upload-box {*/
-/*    background-color: var(--graph-bg); !* Darker background *!*/
-/*    border: 2px dashed var(--border-color); !* More subtle border *!*/
-/*    border-radius: 8px;*/
-/*    padding: 1.5rem;*/
-/*    text-align: center;*/
-/*    cursor: pointer;*/
-/*    transition: all 0.3s ease;*/
-/*    color: var(--text-secondary);*/
-/*}*/
-
-/*.upload-box:hover {*/
-/*    background-color: var(--secondary-bg);*/
-/*    border-color: var(--accent-cyan);*/
-/*    color: var(--text-primary);*/
-/*}*/
-
-/*.spectrogram-switch {*/
-/*    margin-top: 0.5rem;*/
-/*}*/
-
-/*.spectrogram-switch label {*/
-/*    color: var(--text-primary);*/
-/*    font-size: 0.9rem;*/
-/*}*/
-
-/*!* Ensure audio players in control deck look good *!*/
-/*.app-card audio {*/
-/*    filter: invert(1) hue-rotate(180deg); !* Basic invert for dark mode *!*/
-/*}*/
-
-
-/*!* ============================================================================*/
-/*   Main Content Area (Original)*/
-/*   ============================================================================ *!*/
-
-/*.section-heading {*/
-/*    color: var(--text-secondary);*/
-/*    font-size: 0.85rem;*/
-/*    font-weight: 600;*/
-/*    letter-spacing: 2px;*/
-/*    margin-bottom: 1rem;*/
-/*    text-transform: uppercase;*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Time Domain Viewers*/
-/*   ============================================================================ *!*/
-
-/*.time-domain-section {*/
-/*    margin-bottom: 2rem;*/
-/*}*/
-
-/*.graph-row {*/
-/*    margin-bottom: 1.5rem;*/
-/*}*/
-
-/*.signal-graph {*/
-/*    background-color: var(--graph-bg);*/
-/*    border-radius: 8px;*/
-/*    border: 1px solid var(--border-color);*/
-/*    height: 200px;*/
-/*}*/
-
-/*.spectrogram-mini {*/
-/*    background-color: var(--graph-bg);*/
-/*    border-radius: 8px;*/
-/*    border: 1px solid var(--border-color);*/
-/*    height: 200px;*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Playback Controls*/
-/*   ============================================================================ *!*/
-
-/*.controls-section {*/
-/*    background-color: var(--secondary-bg);*/
-/*    padding: 1rem 1.5rem;*/
-/*    border-radius: 8px;*/
-/*    border: 1px solid var(--border-color);*/
-/*}*/
-
-/*.playback-controls {*/
-/*    display: flex;*/
-/*    gap: 0.5rem;*/
-/*    flex-wrap: wrap;*/
-/*}*/
-
-/*.playback-controls .btn {*/
-/*    background-color: var(--graph-bg);*/
-/*    border-color: var(--border-color);*/
-/*    color: var(--text-primary);*/
-/*}*/
-
-/*.playback-controls .btn:hover {*/
-/*    background-color: var(--accent-cyan);*/
-/*    border-color: var(--accent-cyan);*/
-/*    color: var(--primary-bg);*/
-/*}*/
-
-/*.playback-controls .btn-primary {*/
-/*    background-color: var(--accent-blue);*/
-/*    border-color: var(--accent-blue);*/
-/*}*/
-
-/*.playback-controls .btn-primary:hover {*/
-/*    background-color: var(--accent-cyan);*/
-/*}*/
-
-/*.global-controls-dropdown button {*/
-/*    background-color: var(--graph-bg);*/
-/*    border-color: var(--border-color);*/
-/*    color: var(--text-primary);*/
-/*}*/
-
-/*.speed-control {*/
-/*    display: flex;*/
-/*    align-items: center;*/
-/*    gap: 1rem;*/
-/*}*/
-
-/*.speed-label {*/
-/*    color: var(--text-secondary);*/
-/*    font-size: 0.85rem;*/
-/*    margin: 0;*/
-/*}*/
-
-/*.speed-slider {*/
-/*    flex: 1;*/
-/*    max-width: 300px;*/
-/*}*/
-
-/*.speed-slider .rc-slider-track {*/
-/*    background-color: var(--accent-cyan);*/
-/*}*/
-
-/*.speed-slider .rc-slider-handle {*/
-/*    border-color: var(--accent-cyan);*/
-/*    background-color: var(--accent-cyan);*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Frequency Domain*/
-/*   ============================================================================ *!*/
-
-/*.frequency-domain-section {*/
-/*    margin-bottom: 2rem;*/
-/*}*/
-
-/*.frequency-graph {*/
-/*    background-color: var(--graph-bg);*/
-/*    border-radius: 8px;*/
-/*    border: 1px solid var(--border-color);*/
-/*    height: 300px;*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Scale Selector Buttons - Updated for better visibility*/
-/*   ============================================================================ *!*/
-
-/*.scale-selector {*/
-/*    display: flex;*/
-/*    gap: 0.5rem;*/
-/*}*/
-
-/*!* Default state - inactive button (more visible) *!*/
-/*.scale-selector .btn {*/
-/*    background-color: var(--secondary-bg);*/
-/*    border: 2px solid var(--text-secondary);*/
-/*    color: var(--text-primary) !important;*/
-/*    font-size: 0.8rem;*/
-/*    padding: 0.4rem 1rem;*/
-/*    transition: all 0.3s ease;*/
-/*}*/
-
-/*!* Hover state - inactive button *!*/
-/*.scale-selector .btn:hover {*/
-/*    background-color: var(--secondary-bg);*/
-/*    border-color: var(--accent-cyan);*/
-/*    color: var(--text-primary) !important;*/
-/*}*/
-
-/*!* Active state - selected button *!*/
-/*.scale-selector .btn.active {*/
-/*    background-color: var(--accent-cyan);*/
-/*    border-color: var(--accent-cyan);*/
-/*    color: var(--text-primary) !important;*/
-/*}*/
-
-/*!* Active button hover - keep it visible *!*/
-/*.scale-selector .btn.active:hover {*/
-/*    background-color: var(--accent-blue);*/
-/*    border-color: var(--accent-blue);*/
-/*    color: var(--text-primary) !important;*/
-/*}*/
-
-/*!* Outline button specifically (for non-active state) *!*/
-/*.scale-selector .btn-outline-primary {*/
-/*    background-color: var(--secondary-bg);*/
-/*    border: 2px solid var(--text-secondary);*/
-/*    color: var(--text-primary) !important;*/
-/*}*/
-
-/*.scale-selector .btn-outline-primary:hover {*/
-/*    background-color: var(--secondary-bg);*/
-/*    border-color: var(--accent-cyan);*/
-/*    color: var(--text-primary) !important;*/
-/*}*/
-
-/*!* Primary button (active state) *!*/
-/*.scale-selector .btn-primary {*/
-/*    background-color: var(--accent-cyan);*/
-/*    border-color: var(--accent-cyan);*/
-/*    color: var(--text-primary) !important;*/
-/*}*/
-
-/*.scale-selector .btn-primary:hover {*/
-/*    background-color: var(--accent-blue);*/
-/*    border-color: var(--accent-blue);*/
-/*    color: var(--text-primary) !important;*/
-/*}*/
-
-/*!* Focus state - remove default bootstrap focus *!*/
-/*.scale-selector .btn:focus {*/
-/*    box-shadow: 0 0 0 0.2rem rgba(0, 217, 255, 0.25);*/
-/*}*/
-
-/*!* Active button - pressed state *!*/
-/*.scale-selector .btn:active {*/
-/*    background-color: var(--accent-cyan) !important;*/
-/*    border-color: var(--accent-cyan) !important;*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Equalizer Sliders*/
-/*   ============================================================================ *!*/
-
-/*!* The .equalizer-section is now just an .app-card *!*/
-/*.equalizer-section {*/
-/*    background-color: var(--secondary-bg);*/
-/*    padding: 2rem;*/
-/*    border-radius: 12px;*/
-/*    border: 1px solid var(--border-color);*/
-/*}*/
-
-/*.sliders-row {*/
-/*    display: flex;*/
-/*    justify-content: space-around;*/
-/*    align-items: flex-end;*/
-/*    gap: 2rem;*/
-/*    padding: 2rem 0;*/
-/*}*/
-
-/*.slider-container {*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    align-items: center;*/
-/*    gap: 1rem;*/
-/*}*/
-
-/*.equalizer-slider {*/
-/*    height: 150px;*/
-/*}*/
-
-/*.equalizer-slider .rc-slider-track {*/
-/*    background: linear-gradient(to top, var(--accent-cyan), var(--accent-blue));*/
-/*    width: 4px;*/
-/*}*/
-
-/*.equalizer-slider .rc-slider-rail {*/
-/*    background-color: var(--border-color);*/
-/*    width: 4px;*/
-/*}*/
-
-/*.equalizer-slider .rc-slider-handle {*/
-/*    width: 24px;*/
-/*    height: 24px;*/
-/*    border: 3px solid var(--accent-cyan);*/
-/*    background-color: var(--primary-bg);*/
-/*    margin-left: -10px;*/
-/*}*/
-
-/*.equalizer-slider .rc-slider-handle:hover,*/
-/*.equalizer-slider .rc-slider-handle:active {*/
-/*    border-color: var(--accent-blue);*/
-/*    box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);*/
-/*}*/
-
-/*.slider-icon {*/
-/*    font-size: 2rem;*/
-/*    color: var(--accent-cyan);*/
-/*    width: 60px;*/
-/*    height: 60px;*/
-/*    display: flex;*/
-/*    align-items: center;*/
-/*    justify-content: center;*/
-/*    background-color: var(--graph-bg);*/
-/*    border-radius: 50%;*/
-/*    border: 2px solid var(--border-color);*/
-/*}*/
-
-/*.slider-icon-img {*/
-/*    width: 40px;*/
-/*    height: 40px;*/
-/*    object-fit: contain;*/
-/*}*/
-
-/*.slider-label {*/
-/*    color: var(--text-primary);*/
-/*    font-size: 0.85rem;*/
-/*    font-weight: 500;*/
-/*    text-align: center;*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Generic Mode Specific*/
-/*   ============================================================================ *!*/
-
-/*.generic-mode-section {*/
-/*    background-color: var(--secondary-bg);*/
-/*    padding: 1.5rem;*/
-/*    border-radius: 8px;*/
-/*    border: 1px solid var(--border-color);*/
-/*    margin-top: 2rem;*/
-/*}*/
-
-/*.subdivision-configs .card {*/
-/*    background-color: var(--graph-bg);*/
-/*    border-color: var(--border-color);*/
-/*    margin-bottom: 1rem;*/
-/*}*/
-
-/*.subdivision-configs .form-control {*/
-/*    background-color: var(--primary-bg);*/
-/*    border-color: var(--border-color);*/
-/*    color: var(--text-primary);*/
-/*}*/
-
-/*.subdivision-configs .form-control:focus {*/
-/*    background-color: var(--primary-bg);*/
-/*    border-color: var(--accent-cyan);*/
-/*    color: var(--text-primary);*/
-/*    box-shadow: 0 0 0 0.2rem rgba(0, 217, 255, 0.25);*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Voice Mode Specific*/
-/*   ============================================================================ *!*/
-
-/*.voice-filters {*/
-/*    background-color: var(--secondary-bg);*/
-/*    border-color: var(--border-color) !important;*/
-/*}*/
-
-/*.voice-filters label {*/
-/*    color: var(--text-secondary);*/
-/*    font-size: 0.85rem;*/
-/*    font-weight: 600;*/
-/*    margin-bottom: 0.5rem;*/
-/*}*/
-
-/*.voice-filters .form-check-label {*/
-/*    color: var(--text-primary);*/
-/*    font-weight: 400;*/
-/*}*/
-
-/*.voice-filters .form-check-input:checked {*/
-/*    background-color: var(--accent-cyan);*/
-/*    border-color: var(--accent-cyan);*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Plotly Graph Customization*/
-/*   ============================================================================ *!*/
-
-/*.js-plotly-plot .plotly .modebar {*/
-/*    background-color: var(--secondary-bg) !important;*/
-/*}*/
-
-/*.js-plotly-plot .plotly .modebar-btn {*/
-/*    color: var(--text-primary) !important;*/
-/*}*/
-
-/*.js-plotly-plot .plotly .modebar-btn:hover {*/
-/*    background-color: var(--accent-cyan) !important;*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Scrollbar Styling*/
-/*   ============================================================================ *!*/
-
-/*::-webkit-scrollbar {*/
-/*    width: 8px;*/
-/*    height: 8px;*/
-/*}*/
-
-/*::-webkit-scrollbar-track {*/
-/*    background: var(--secondary-bg);*/
-/*}*/
-
-/*::-webkit-scrollbar-thumb {*/
-/*    background: var(--border-color);*/
-/*    border-radius: 4px;*/
-/*}*/
-
-/*::-webkit-scrollbar-thumb:hover {*/
-/*    background: var(--accent-cyan);*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Responsive Design*/
-/*   ============================================================================ *!*/
-
-/*@media (max-width: 1200px) {*/
-/*    .sliders-row {*/
-/*        gap: 1rem;*/
-/*    }*/
-
-/*    .slider-container {*/
-/*        gap: 0.5rem;*/
-/*    }*/
-/*}*/
-
-/*@media (max-width: 768px) {*/
-/*    !* The new layout is already more responsive, so sidebar rules are not needed *!*/
-
-/*    .main-app-content {*/
-/*        padding: 0.5rem;*/
-/*    }*/
-
-/*    .app-card {*/
-/*        padding: 1rem;*/
-/*    }*/
-
-/*    .sliders-row {*/
-/*        flex-wrap: wrap;*/
-/*        justify-content: center;*/
-/*    }*/
-
-/*    .playback-controls {*/
-/*        justify-content: center;*/
-/*    }*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Animations*/
-/*   ============================================================================ *!*/
-
-/*@keyframes fadeIn {*/
-/*    from {*/
-/*        opacity: 0;*/
-/*        transform: translateY(10px);*/
-/*    }*/
-/*    to {*/
-/*        opacity: 1;*/
-/*        transform: translateY(0);*/
-/*    }*/
-/*}*/
-
-/*!* Apply fade-in to the new cards *!*/
-/*.app-card {*/
-/*    animation: fadeIn 0.3s ease-out;*/
-/*}*/
-
-/*!* ============================================================================*/
-/*   Utility Classes*/
-/*   ============================================================================ *!*/
-
-/*.text-cyan {*/
-/*    color: var(--accent-cyan);*/
-/*}*/
-
-/*.bg-dark-secondary {*/
-/*    background-color: var(--secondary-bg);*/
-/*}*/
-
-/*.border-dark {*/
-/*    border-color: var(--border-color) !important;*/
-/*}*/
+.hover-lift:hover {
+    transform: translateY(-3px);
+}

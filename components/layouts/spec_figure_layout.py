@@ -1,69 +1,53 @@
 import plotly.graph_objs as go
 import numpy as np
 
+
 def create_spec_figure(f, t, Sxx):
     """
-    Creates a Plotly figure for the spectrogram, styled similarly
-    to the user's matplotlib example.
-    
-    Args:
-        f (np.array): Array of frequency bins (y-axis).
-        t (np.array): Array of time bins (x-axis).
-        Sxx (np.array): The 2D spectrogram matrix (power).
-        
-    Returns:
-        go.Figure: A Plotly figure object.
+    Creates a Plotly figure for the spectrogram with proper sizing
     """
-    
-    # --- Start of Matplotlib-style changes ---
-    
-    # 1. Add a tiny "epsilon" to Sxx to avoid log(0) which is -infinity
-    # This is a standard practice.
-    epsilon = 1e-10 
-    
-    # 2. Convert power (Sxx) to decibels (dB)
+
+    epsilon = 1e-10
     Sxx_db = 10 * np.log10(Sxx + epsilon)
-    
-    # 3. Create the Heatmap trace (the Plotly version of pcolormesh)
+
     trace = go.Heatmap(
         x=t,
         y=f,
         z=Sxx_db,
-        colorscale='Inferno', # 'Viridis', 'Jet', 'Inferno' are good choices
-        
-        # 4. Set the colorbar title
+        colorscale='Inferno',
         colorbar=dict(
-            title='Intensity [dB]'
+            title=dict(
+                text='Intensity [dB]',
+                side='right'  # This is the correct way to position the title
+            ),
+            thickness=15,
+            len=0.7,
+            x=1.02,  # Position colorbar to the right
+            xanchor='left'
         ),
-        
-        # This makes the plot smoother, similar to 'gouraud' shading
-        zsmooth='best' 
+        zsmooth='best'
     )
-    
-    # 5. Create the layout and set labels (xlabel, ylabel, title)
+
     layout = go.Layout(
-        title='Spectrogram',
-        xaxis=dict(title='Time [sec]'),
+        xaxis=dict(
+            title='Time [sec]',
+            gridcolor='rgba(255,255,255,0.1)',
+            showgrid=True
+        ),
         yaxis=dict(
             title='Frequency [Hz]',
-            range=[0, f.max()]  # Similar to plt.ylim([0, samplerate / 2])
+            range=[0, f.max()],
+            gridcolor='rgba(255,255,255,0.1)',
+            showgrid=True
         ),
-        plot_bgcolor='white',  # Set background to white
-        paper_bgcolor='white',
+        paper_bgcolor='#12172e',
+        plot_bgcolor='#12172e',
+        font=dict(color='#ffffff', size=10),
+        margin=dict(l=50, r=50, t=10, b=40),
+        autosize=True,
+        hovermode='closest'
     )
-    
-    # 6. Create the figure object
+
     fig = go.Figure(data=[trace], layout=layout)
-    
-    # 7. Add gridlines (similar to plt.grid(True))
-    fig.update_layout(
-        xaxis_showgrid=True, 
-        yaxis_showgrid=True,
-        xaxis_gridcolor='rgba(0, 0, 0, 0.1)', # Light grey grid
-        yaxis_gridcolor='rgba(0, 0, 0, 0.1)',
-        font_color='black' # Ensure text is readable on white bg
-    )
-    
-    # --- End of Matplotlib-style changes ---
-    
+
     return fig

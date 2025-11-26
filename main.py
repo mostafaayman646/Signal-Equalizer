@@ -6,6 +6,8 @@ Updated with Tab-Based Layout
 import dash
 import dash_bootstrap_components as dbc
 
+# from components.callbacks.Compact_Cine import register_compact_cine_callbacks
+from components.callbacks.Cine_Viewer_Full import register_cine_viewer_callbacks
 # Import components and callbacks
 from components.layout_builder import create_app_layout, cine_viewer
 from components.tab_callbacks import register_tab_callbacks  # NEW
@@ -23,6 +25,8 @@ from modes.customized.customized_callbacks.Musical_Ai_model_callbacks import reg
 from modes.customized.customized_callbacks.Human_Ai_model_callbacks import register_Human_AiModel
 from modes.generic import register_generic_callbacks
 from modes.customized.customized_callbacks.AI_signal_processing import register_ai_signal_processing
+from components.callbacks.Control_Deck_Toggle import register_control_deck_toggle
+
 # Initialize App
 app = dash.Dash(
     __name__,
@@ -40,7 +44,10 @@ app.layout = create_app_layout()
 
 # Register callbacks
 register_tab_callbacks(app)  # NEW - Must be first!
-cine_viewer.register_callbacks(app)
+register_control_deck_toggle(app)
+# register_compact_cine_callbacks(app)
+register_cine_viewer_callbacks(app)
+# cine_viewer.register_callbacks(app)
 register_Upload_signal(app)
 register_mode_switch(app)
 register_Toggle_spectogram(app)
