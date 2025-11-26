@@ -1,291 +1,593 @@
+"""
+Enhanced Cine Viewer with Synchronized Playback Cursor
+Features:
+- Full signal display on both graphs
+- Synchronized zooming and panning
+- Moving playback cursor synchronized with audio
+- Audio source selection (before/after)
+"""
+
 import numpy as np
 import plotly.graph_objects as go
-from dash import Input, Output, State, ctx, no_update, Patch
+from dash import Input, Output, State, ctx, no_update, html
+from dash.exceptions import PreventUpdate
 
-# --- Performance Constants ---
-MAX_POINTS_ON_SCREEN = 800  # Lower = Faster. 800 is usually plenty.
-PLAYBACK_INTERVAL_MS = 80  # Higher = Less lag. 80ms is ~12fps (smooth for web).
-DECIMALS = 2  # Rounding data reduces JSON size drastically.
+MAX_DISPLAY_POINTS = 3000  # Reduced for better performance
+CURSOR_UPDATE_INTERVAL = 100  # Update every 100ms instead of 50ms for smoother performance
 
 
 def register_cine_viewer_callbacks(app):
-    """
-    Ultra-Light Cine Viewer Logic
-    Optimized for smooth playback over HTTP.
-    """
+    """Register callbacks for synchronized cine viewer with audio playback"""
 
-    # 1. Initialize Window & Set Optimal Ticker Speed
+    # ============================================================================
+    # 1. Initialize Full Signal Display
+    # ============================================================================
     @app.callback(
-        Output('cine-window-state', 'data'),
+        Output('cine-graph-pre', 'figure'),
+        Output('cine-graph-post', 'figure'),
         Output('cine-playback-state', 'data'),
-        Output('cine-ticker', 'interval'),  # Optimize the interval dynamically
+        Output('cine-window-state', 'data'),
         Input('signal-data-store', 'data'),
+        Input('processed-signal-store', 'data'),
+        prevent_initial_call=False
     )
-    def initialize_window(signal_store):
-        if not signal_store:
-            return no_update, no_update, no_update
+    def initialize_full_signal(original_data, processed_data):
+        """Display full signal on both graphs"""
 
-        total = len(signal_store.get("samples", []))
-        sr = signal_store.get("sample_rate", 44100)
+        if not original_data:
+            empty_fig = create_empty_figure()
+            return empty_fig, empty_fig, None, None
 
-        # Default view: 2 seconds
-        span = max(1, int(2.0 * sr))
+        # Get original signal
+        original_signal = np.array(original_data.get('samples', []), dtype=float)
+        sample_rate = original_data.get('sample_rate', 44100)
 
-        window = {
-            "start": 0,
-            "end": min(span, total),
-            "total": total,
-            "sample_rate": sr,
+        if len(original_signal) == 0:
+            empty_fig = create_empty_figure()
+            return empty_fig, empty_fig, None, None
+
+        # Get processed signal (or use original if not available)
+        if processed_data and processed_data.get('samples'):
+            processed_signal = np.array(processed_data.get('samples', []), dtype=float)
+        else:
+            processed_signal = original_signal.copy()
+
+        # Create time axis
+        duration = len(original_signal) / sample_rate
+
+        # Decimate for display
+        original_decimated, time_decimated = decimate_signal(original_signal, sample_rate)
+        processed_decimated, _ = decimate_signal(processed_signal, sample_rate)
+
+        # Create figures
+        fig_pre = create_signal_figure(
+            time_decimated,
+            original_decimated,
+            "Original Signal",
+            duration
+        )
+
+        fig_post = create_signal_figure(
+            time_decimated,
+            processed_decimated,
+            "Processed Signal",
+            duration
+        )
+
+        # Initialize playback state
+        playback_state = {
+            'is_playing': False,
+            'cursor_position': 0.0,  # in seconds
+            'duration': duration,
+            'audio_source': 'before'  # 'before' or 'after'
         }
-        playback = {"is_playing": False, "loop": False, "cursor": 0}
 
-        # Return window, playback, and the optimized interval speed
-        return window, playback, PLAYBACK_INTERVAL_MS
+        # Initialize window state for zoom sync
+        window_state = {
+            'x_range': [0, duration],
+            'sample_rate': sample_rate,
+            'total_samples': len(original_signal)
+        }
 
-    # 2. Toggle Ticker
+        return fig_pre, fig_post, playback_state, window_state
+
+    # ============================================================================
+    # 2. Synchronized Zoom/Pan (Relayout Events)
+    # ============================================================================
     @app.callback(
-        Output('cine-ticker', 'disabled'),
-        Input('cine-playback-state', 'data'),
+        Output('cine-graph-pre', 'figure', allow_duplicate=True),
+        Output('cine-graph-post', 'figure', allow_duplicate=True),
+        Output('cine-window-state', 'data', allow_duplicate=True),
+        Input('cine-graph-pre', 'relayoutData'),
+        Input('cine-graph-post', 'relayoutData'),
+        State('cine-window-state', 'data'),
+        State('cine-graph-pre', 'figure'),
+        State('cine-graph-post', 'figure'),
+        prevent_initial_call=True
     )
-    def toggle_ticker(playback):
-        if not playback: return True
-        return not playback.get('is_playing', False)
+    def sync_zoom_pan(relayout_pre, relayout_post, window_state, fig_pre, fig_post):
+        """Synchronize zoom and pan between both graphs"""
 
-    # 3. Playback Controls (Play/Pause/Stop/Loop)
+        if not window_state:
+            raise PreventUpdate
+
+        triggered = ctx.triggered_id
+        relayout_data = relayout_pre if triggered == 'cine-graph-pre' else relayout_post
+
+        if not relayout_data:
+            raise PreventUpdate
+
+        # Check for zoom/pan changes
+        if 'xaxis.range[0]' in relayout_data and 'xaxis.range[1]' in relayout_data:
+            x_min = relayout_data['xaxis.range[0]']
+            x_max = relayout_data['xaxis.range[1]']
+
+            # Update window state
+            window_state['x_range'] = [x_min, x_max]
+
+            # Update both figures with new x-axis range
+            fig_pre['layout']['xaxis']['range'] = [x_min, x_max]
+            fig_post['layout']['xaxis']['range'] = [x_min, x_max]
+
+            return fig_pre, fig_post, window_state
+
+        # Check for autorange
+        if relayout_data.get('xaxis.autorange'):
+            duration = window_state.get('total_samples', 1) / window_state.get('sample_rate', 44100)
+            window_state['x_range'] = [0, duration]
+
+            fig_pre['layout']['xaxis']['range'] = [0, duration]
+            fig_post['layout']['xaxis']['range'] = [0, duration]
+
+            return fig_pre, fig_post, window_state
+
+        raise PreventUpdate
+
+    # ============================================================================
+    # 3. Playback Controls
+    # ============================================================================
     @app.callback(
         Output('cine-playback-state', 'data', allow_duplicate=True),
+        Output('cine-ticker', 'disabled'),
+        Output('cine-loop', 'color'),
         Input('cine-play', 'n_clicks'),
         Input('cine-pause', 'n_clicks'),
         Input('cine-stop', 'n_clicks'),
         Input('cine-loop', 'n_clicks'),
+        Input('cine-audio-source-toggle', 'value'),
         State('cine-playback-state', 'data'),
-        State('cine-window-state', 'data'),
         prevent_initial_call=True
     )
-    def update_playback(play, pause, stop, loop_btn, playback, window):
-        trigger = ctx.triggered_id
-        playback = playback.copy() if playback else {'is_playing': False, 'loop': False, 'cursor': 0}
+    def control_playback(play_clicks, pause_clicks, stop_clicks, loop_clicks, audio_source, playback_state):
+        """Handle playback controls"""
 
-        if trigger == 'cine-play':
-            playback['is_playing'] = True
-            # Restart if at end and not looping
-            if window and window['end'] >= window['total'] and not playback.get('loop'):
-                playback['cursor'] = 0
-            # Sync cursor if fresh start
-            elif window and not playback.get('is_playing'):
-                playback['cursor'] = window['start']
-        elif trigger == 'cine-pause':
-            playback['is_playing'] = False
-        elif trigger == 'cine-stop':
-            playback['is_playing'] = False
-            playback['cursor'] = 0
-        elif trigger == 'cine-loop':
-            playback['loop'] = not playback.get('loop', False)
+        if not playback_state:
+            raise PreventUpdate
 
-        return playback
+        triggered = ctx.triggered_id
+        loop_color = 'success' if playback_state.get('loop', False) else 'secondary'
 
-    # 4. Reset View Logic
+        if triggered == 'cine-play':
+            playback_state['is_playing'] = True
+            return playback_state, False, loop_color  # Enable ticker
+
+        elif triggered == 'cine-pause':
+            playback_state['is_playing'] = False
+            return playback_state, True, loop_color  # Disable ticker
+
+        elif triggered == 'cine-stop':
+            playback_state['is_playing'] = False
+            playback_state['cursor_position'] = 0.0
+            return playback_state, True, loop_color  # Disable ticker
+
+        elif triggered == 'cine-loop':
+            playback_state['loop'] = not playback_state.get('loop', False)
+            loop_color = 'success' if playback_state['loop'] else 'secondary'
+            return playback_state, not playback_state['is_playing'], loop_color
+
+        elif triggered == 'cine-audio-source-toggle':
+            playback_state['audio_source'] = audio_source[0] if audio_source else 'before'
+            return playback_state, not playback_state['is_playing'], loop_color
+
+        raise PreventUpdate
+
+    # ============================================================================
+    # 4. Update Playback Cursor Position (OPTIMIZED)
+    # ============================================================================
     @app.callback(
-        Output('cine-window-state', 'data', allow_duplicate=True),
-        Input('cine-stop', 'n_clicks'),
-        Input('cine-loop', 'n_clicks'),
-        State('cine-window-state', 'data'),
-        State('signal-data-store', 'data'),
-        prevent_initial_call=True
-    )
-    def reset_view(stop, loop, window, signal_store):
-        if not window or not signal_store: return no_update
-        new_window = window.copy()
-        span = new_window['end'] - new_window['start']
-        new_window['start'] = 0
-        new_window['end'] = min(span, new_window['total'])
-        return new_window
-
-    # 5. The Ticker Engine (Calculates new positions)
-    @app.callback(
-        Output('cine-window-state', 'data', allow_duplicate=True),
         Output('cine-playback-state', 'data', allow_duplicate=True),
         Input('cine-ticker', 'n_intervals'),
-        State('cine-window-state', 'data'),
         State('cine-playback-state', 'data'),
         State('cine-speed', 'value'),
         prevent_initial_call=True
     )
-    def advance_window(_, window, playback, speed):
-        if not window or not playback or not playback.get('is_playing'):
-            return no_update, no_update
+    def advance_cursor(n_intervals, playback_state, speed):
+        """Advance cursor position during playback - OPTIMIZED"""
 
-        sr = window['sample_rate']
-        # Calculate step size based on real-time Interval
-        step_samples = int(sr * (PLAYBACK_INTERVAL_MS / 1000.0) * (speed or 1.0))
+        if not playback_state or not playback_state.get('is_playing'):
+            raise PreventUpdate
 
-        current_start = window['start']
-        span = window['end'] - window['start']
-        total = window['total']
+        # Use larger time increment for smoother updates
+        time_increment = CURSOR_UPDATE_INTERVAL / 1000.0 * (speed or 1.0)
 
-        new_start = current_start + step_samples
-        new_end = new_start + span
-        should_stop = False
+        current_position = playback_state['cursor_position']
+        duration = playback_state['duration']
 
-        if new_end >= total:
-            if playback.get('loop'):
-                new_start = 0
-                new_end = span
+        new_position = current_position + time_increment
+
+        # Loop or stop at end
+        if new_position >= duration:
+            if playback_state.get('loop', False):
+                new_position = 0.0
             else:
-                new_start = total - span
-                new_end = total
-                should_stop = True
+                new_position = duration
+                playback_state['is_playing'] = False
 
-        window_out = window.copy()
-        window_out['start'] = int(new_start)
-        window_out['end'] = int(new_end)
+        playback_state['cursor_position'] = new_position
 
-        playback_out = playback.copy()
-        playback_out['cursor'] = int(new_start)
-        if should_stop:
-            playback_out['is_playing'] = False
+        return playback_state
 
-        return window_out, playback_out
-
-    # 6. Optimized Renderer (Patch + Rounding + Decimation)
+    # ============================================================================
+    # 5. Draw Playback Cursor on Both Graphs (OPTIMIZED)
+    # ============================================================================
     @app.callback(
-        Output('cine-graph-pre', 'figure'),
-        Output('cine-graph-post', 'figure'),
-        Input('cine-window-state', 'data'),
-        Input('cine-last-relayout', 'data'),
-        State('signal-data-store', 'data'),
-        State('processed-signal-store', 'data'),
+        Output('cine-graph-pre', 'figure', allow_duplicate=True),
+        Output('cine-graph-post', 'figure', allow_duplicate=True),
+        Output('cine-current-time', 'children'),
+        Input('cine-playback-state', 'data'),
         State('cine-graph-pre', 'figure'),
+        State('cine-graph-post', 'figure'),
         prevent_initial_call=True
     )
-    def update_figures_optimized(window, last_state, original, processed, current_fig):
-        trigger = ctx.triggered_id
+    def update_cursor(playback_state, fig_pre, fig_post):
+        """Update cursor line on both graphs - OPTIMIZED VERSION"""
 
-        if not window or not original:
-            return no_update, no_update
+        if not playback_state or not fig_pre or not fig_post:
+            raise PreventUpdate
 
-        # --- A. Smart Slicing & Decimation ---
-        samples = np.asarray(original.get('samples', []), dtype=float)
-        if len(samples) == 0: return no_update, no_update
+        cursor_position = playback_state.get('cursor_position', 0.0)
+        duration = playback_state.get('duration', 1.0)
 
-        start = int(max(0, window['start']))
-        end = int(min(len(samples), window['end']))
+        # Create cursor shape
+        cursor_shape = {
+            'type': 'line',
+            'x0': cursor_position,
+            'x1': cursor_position,
+            'y0': 0,
+            'y1': 1,
+            'yref': 'paper',
+            'line': {
+                'color': '#ff4757',
+                'width': 2
+            },
+            'layer': 'above'
+        }
 
-        # Calculate Step to strictly limit points on screen
-        view_size = end - start
-        step = max(1, view_size // MAX_POINTS_ON_SCREEN)
+        # OPTIMIZATION: Use Patch for minimal updates
+        from dash import Patch
 
-        # Slice and Round (Rounding significantly speeds up JSON transfer)
-        y_pre = np.round(samples[start:end:step], DECIMALS)
+        patch_pre = Patch()
+        patch_post = Patch()
 
-        # Generate X Axis
-        t_start = start / window['sample_rate']
-        t_end = end / window['sample_rate']
-        # Use linspace for fastest array generation
-        x_axis = np.linspace(t_start, t_end, len(y_pre))
-        x_axis = np.round(x_axis, 3)  # Round time axis too
+        # Initialize shapes list if doesn't exist
+        if 'shapes' not in fig_pre.get('layout', {}):
+            patch_pre['layout']['shapes'] = []
+        if 'shapes' not in fig_post.get('layout', {}):
+            patch_post['layout']['shapes'] = []
 
-        # Handle Output Signal
-        y_post = None
-        x_post = None
-        if processed and 'samples' in processed:
-            proc_s = np.asarray(processed['samples'], dtype=float)
-            if len(proc_s) > 0:
-                p_end = min(end, len(proc_s))
-                y_post = np.round(proc_s[start:p_end:step], DECIMALS)
-                x_post = np.linspace(t_start, p_end / window['sample_rate'], len(y_post))
-                x_post = np.round(x_post, 3)
+        # Remove old cursor (if exists) and add new one
+        # Keep only non-cursor shapes
+        shapes_pre = [s for s in fig_pre.get('layout', {}).get('shapes', [])
+                      if s.get('line', {}).get('color') != '#ff4757']
+        shapes_post = [s for s in fig_post.get('layout', {}).get('shapes', [])
+                       if s.get('line', {}).get('color') != '#ff4757']
 
-        # --- B. Update Check (Patch vs Full) ---
-        graph_exists = current_fig and 'data' in current_fig and len(current_fig['data']) > 0
-        is_playback = (trigger == 'cine-window-state')
+        # Add new cursor
+        shapes_pre.append(cursor_shape)
+        shapes_post.append(cursor_shape)
 
-        if is_playback and graph_exists:
-            # === Fast Patch Update ===
-            patch_pre = Patch()
-            patch_post = Patch()
+        patch_pre['layout']['shapes'] = shapes_pre
+        patch_post['layout']['shapes'] = shapes_post
 
-            # Update Lines
-            patch_pre['data'][0]['x'] = x_axis
-            patch_pre['data'][0]['y'] = y_pre
-            patch_pre['layout']['xaxis']['range'] = [t_start, t_end]
+        # Format time display
+        time_display = format_time(cursor_position, duration)
 
-            if y_post is not None:
-                patch_post['data'][0]['x'] = x_post
-                patch_post['data'][0]['y'] = y_post
-            else:
-                patch_post['data'][0]['x'] = x_axis
-                patch_post['data'][0]['y'] = y_pre
+        return patch_pre, patch_post, time_display
 
-            patch_post['layout']['xaxis']['range'] = [t_start, t_end]
-
-            return patch_pre, patch_post
-
-        # === Full Figure Initialization ===
-        def get_yrange(y):
-            if len(y) == 0: return [-1, 1]
-            mx = np.max(np.abs(y))
-            return [-mx * 1.1, mx * 1.1]
-
-        y_range_pre = get_yrange(y_pre)
-        y_range_post = get_yrange(y_post) if y_post is not None else y_range_pre
-
-        # Layout Configuration with uirevision to reduce flicker
-        layout_cfg = dict(
-            template="plotly_dark",
-            margin=dict(l=40, r=10, t=10, b=30),
-            paper_bgcolor='#12172e',
-            plot_bgcolor='#12172e',
-            xaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)', range=[t_start, t_end]),
-            yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)', zeroline=True),
-            height=260,
-            uirevision='true'  # Keep camera/zoom state stable
-        )
-
-        fig_pre = go.Figure()
-        fig_pre.add_trace(go.Scattergl(
-            x=x_axis, y=y_pre, mode='lines',
-            line=dict(color='#00d9ff', width=1.5), name='Input'
-        ))
-        fig_pre.update_layout(**layout_cfg)
-        fig_pre.update_yaxes(range=y_range_pre)
-
-        fig_post = go.Figure()
-        data_post = y_post if y_post is not None else y_pre
-        color_post = '#00ff88' if y_post is not None else '#00d9ff'
-        x_post_final = x_post if y_post is not None else x_axis
-
-        fig_post.add_trace(go.Scattergl(
-            x=x_post_final, y=data_post, mode='lines',
-            line=dict(color=color_post, width=1.5), name='Output'
-        ))
-        fig_post.update_layout(**layout_cfg)
-        fig_post.update_yaxes(range=y_range_post)
-
-        return fig_pre, fig_post
-
-    # 7. Sync Zoom/Pan
+    # ============================================================================
+    # 6. Click to Seek Position
+    # ============================================================================
     @app.callback(
-        Output('cine-window-state', 'data', allow_duplicate=True),
-        Output('cine-last-relayout', 'data'),
-        Input('cine-graph-pre', 'relayoutData'),
-        Input('cine-graph-post', 'relayoutData'),
-        State('cine-window-state', 'data'),
-        State('cine-last-relayout', 'data'),
+        Output('cine-playback-state', 'data', allow_duplicate=True),
+        Input('cine-graph-pre', 'clickData'),
+        Input('cine-graph-post', 'clickData'),
+        State('cine-playback-state', 'data'),
         prevent_initial_call=True
     )
-    def sync_relayout(rel_pre, rel_post, window, last):
-        trig = ctx.triggered_id
-        relayout = rel_pre if trig == 'cine-graph-pre' else rel_post
-        if not relayout or not window: return no_update, no_update
+    def seek_position(click_pre, click_post, playback_state):
+        """Allow clicking on graph to seek to position"""
 
-        if 'xaxis.range[0]' in relayout:
-            t0 = relayout['xaxis.range[0]']
-            t1 = relayout['xaxis.range[1]']
-            sr = window['sample_rate']
-            new_window = window.copy()
-            new_window['start'] = int(t0 * sr)
-            new_window['end'] = int(t1 * sr)
-            return new_window, no_update
+        if not playback_state:
+            raise PreventUpdate
 
-        return no_update, no_update
+        triggered = ctx.triggered_id
+        click_data = click_pre if triggered == 'cine-graph-pre' else click_post
+
+        if not click_data or 'points' not in click_data:
+            raise PreventUpdate
+
+        # Get clicked x position (time)
+        clicked_time = click_data['points'][0]['x']
+
+        # Update cursor position
+        playback_state['cursor_position'] = max(0, min(clicked_time, playback_state['duration']))
+
+        return playback_state
+
+    # ============================================================================
+    # 7. Update Audio Player Source and Control Playback
+    # ============================================================================
+    @app.callback(
+        Output('cine-audio-player', 'src'),
+        Output('cine-audio-player', 'autoPlay'),
+        Input('cine-audio-source-toggle', 'value'),
+        Input('signal-data-store', 'data'),
+        Input('processed-signal-store', 'data'),
+        State('cine-playback-state', 'data'),
+        prevent_initial_call=False
+    )
+    def update_audio_source(audio_source_toggle, original_data, processed_data, playback_state):
+        """Update audio player source based on selected audio"""
+
+        if not original_data:
+            raise PreventUpdate
+
+        # Determine which audio source to use
+        audio_source = audio_source_toggle[0] if audio_source_toggle else 'before'
+
+        triggered = ctx.triggered_id
+
+        # Debug print to see what's happening
+        print(f"[AUDIO SOURCE] Triggered by: {triggered}")
+        print(f"[AUDIO SOURCE] Selected: {audio_source}")
+        print(f"[AUDIO SOURCE] Has processed data: {bool(processed_data and processed_data.get('samples'))}")
+
+        # Get appropriate signal
+        if audio_source == 'after' and processed_data and processed_data.get('samples'):
+            signal = np.array(processed_data.get('samples', []))
+            sample_rate = processed_data.get('sample_rate', 44100)
+            print(f"[AUDIO SOURCE] Using PROCESSED signal ({len(signal)} samples)")
+        else:
+            signal = np.array(original_data.get('samples', []))
+            sample_rate = original_data.get('sample_rate', 44100)
+            print(f"[AUDIO SOURCE] Using ORIGINAL signal ({len(signal)} samples)")
+
+        if len(signal) == 0:
+            raise PreventUpdate
+
+        # Convert to base64 audio
+        from Utils import audio_to_base64_uri
+        audio_uri = audio_to_base64_uri(signal, sample_rate, normalize=True)
+
+        # Auto-play if currently playing
+        auto_play = playback_state and playback_state.get('is_playing', False) if playback_state else False
+
+        print(f"[AUDIO SOURCE] Generated audio URI (length: {len(audio_uri)}), autoPlay: {auto_play}")
+
+        return audio_uri, auto_play
+
+    # ============================================================================
+    # 9. Force Audio Reload When Processed Signal Updates
+    # ============================================================================
+    @app.callback(
+        Output('cine-audio-player', 'src', allow_duplicate=True),
+        Input('processed-signal-store', 'data'),
+        State('cine-audio-source-toggle', 'value'),
+        State('signal-data-store', 'data'),
+        prevent_initial_call=True
+    )
+    def reload_audio_on_process(processed_data, audio_source_toggle, original_data):
+        """Reload audio when processed signal updates and 'After' is selected"""
+
+        if not processed_data or not original_data:
+            raise PreventUpdate
+
+        # Only update if "After" is currently selected
+        audio_source = audio_source_toggle[0] if audio_source_toggle else 'before'
+
+        if audio_source != 'after':
+            print("[AUDIO RELOAD] Processed signal updated but 'Before' is selected - skipping")
+            raise PreventUpdate
+
+        print("[AUDIO RELOAD] Processed signal updated - reloading 'After' audio")
+
+        # Get processed signal
+        signal = np.array(processed_data.get('samples', []))
+        sample_rate = processed_data.get('sample_rate', 44100)
+
+        if len(signal) == 0:
+            raise PreventUpdate
+
+        # Convert to base64 audio
+        from Utils import audio_to_base64_uri
+        audio_uri = audio_to_base64_uri(signal, sample_rate, normalize=True)
+
+        print(f"[AUDIO RELOAD] Reloaded processed audio ({len(signal)} samples)")
+
+        return audio_uri
+    # ============================================================================
+    app.clientside_callback(
+        """
+        function(playback_state, speed) {
+            if (!playback_state) return window.dash_clientside.no_update;
+            
+            const audio = document.getElementById('cine-audio-player');
+            if (!audio) return window.dash_clientside.no_update;
+            
+            const isPlaying = playback_state.is_playing;
+            const cursorPosition = playback_state.cursor_position || 0;
+            
+            // Set playback rate
+            if (speed) {
+                audio.playbackRate = speed;
+            }
+            
+            // Control playback
+            if (isPlaying) {
+                // Sync time if significantly different
+                if (Math.abs(audio.currentTime - cursorPosition) > 0.5) {
+                    audio.currentTime = cursorPosition;
+                }
+                
+                // Play if paused
+                if (audio.paused) {
+                    audio.play().catch(err => console.log('Play failed:', err));
+                }
+            } else {
+                // Pause if playing
+                if (!audio.paused) {
+                    audio.pause();
+                }
+                // Sync time when paused
+                audio.currentTime = cursorPosition;
+            }
+            
+            return window.dash_clientside.no_update;
+        }
+        """,
+        Output('cine-audio-player', 'title'),  # Dummy output
+        Input('cine-playback-state', 'data'),
+        Input('cine-speed', 'value'),
+        prevent_initial_call=True
+    )
+
+    # ============================================================================
+    # 10. Update Audio Track Label
+    # ============================================================================
+    @app.callback(
+        Output('cine-audio-track-label', 'children'),
+        Input('cine-audio-source-toggle', 'value'),
+        prevent_initial_call=False
+    )
+    def update_track_label(audio_source_toggle):
+        """Update label showing which track is playing"""
+        audio_source = audio_source_toggle[0] if audio_source_toggle else 'before'
+
+        if audio_source == 'after':
+            return "Processed (After Equalization)"
+        else:
+            return "Original (Before Equalization)"
+
+def decimate_signal(signal, sample_rate, max_points=MAX_DISPLAY_POINTS):
+    """Decimate signal for efficient display - OPTIMIZED"""
+    if len(signal) <= max_points:
+        time = np.arange(len(signal)) / sample_rate
+        return signal, time
+
+    # Use downsampling with local averaging for smoother appearance
+    stride = int(np.ceil(len(signal) / max_points))
+
+    # Reshape and average for anti-aliasing effect
+    trimmed_length = (len(signal) // stride) * stride
+    signal_trimmed = signal[:trimmed_length]
+
+    # Reshape and take mean
+    signal_reshaped = signal_trimmed.reshape(-1, stride)
+    decimated_signal = signal_reshaped.mean(axis=1)
+
+    # Create time axis
+    time = np.arange(len(decimated_signal)) * stride / sample_rate
+
+    return decimated_signal, time
+
+
+def create_signal_figure(time, signal, title, duration):
+    """Create a plotly figure for signal display - OPTIMIZED"""
+
+    # Calculate y-range
+    if len(signal) > 0:
+        y_max = max(abs(np.max(signal)), abs(np.min(signal)))
+        y_range = [-y_max * 1.1, y_max * 1.1]
+    else:
+        y_range = [-1, 1]
+
+    fig = go.Figure()
+
+    # Use Scattergl for better performance
+    fig.add_trace(go.Scattergl(
+        x=time,
+        y=signal,
+        mode='lines',
+        line=dict(color='#00d9ff', width=1),
+        name=title,
+        hovertemplate='Time: %{x:.3f}s<br>Amplitude: %{y:.3f}<extra></extra>'
+    ))
+
+    fig.update_layout(
+        template='plotly_dark',
+        paper_bgcolor='#12172e',
+        plot_bgcolor='#12172e',
+        font=dict(color='#ffffff', size=10),
+        xaxis=dict(
+            title='Time (s)',
+            range=[0, duration],
+            showgrid=True,
+            gridcolor='rgba(255,255,255,0.08)',
+            zeroline=False,
+            fixedrange=False  # Allow zooming
+        ),
+        yaxis=dict(
+            title='Amplitude',
+            range=y_range,
+            showgrid=True,
+            gridcolor='rgba(255,255,255,0.08)',
+            zeroline=True,
+            zerolinecolor='rgba(255,255,255,0.2)',
+            fixedrange=False  # Allow zooming
+        ),
+        margin=dict(l=45, r=15, t=25, b=35),
+        height=260,
+        hovermode='x unified',
+        uirevision='constant',  # Preserve UI state
+        # Performance optimizations
+        dragmode='pan',
+        modebar=dict(
+            remove=['lasso2d', 'select2d']
+        )
+    )
+
+    return fig
+
+
+def create_empty_figure():
+    """Create empty placeholder figure"""
+    fig = go.Figure()
+
+    fig.update_layout(
+        template='plotly_dark',
+        paper_bgcolor='#12172e',
+        plot_bgcolor='#12172e',
+        xaxis=dict(visible=False),
+        yaxis=dict(visible=False),
+        annotations=[{
+            'text': 'Upload audio to begin',
+            'xref': 'paper',
+            'yref': 'paper',
+            'x': 0.5,
+            'y': 0.5,
+            'showarrow': False,
+            'font': {'size': 16, 'color': '#666'}
+        }]
+    )
+
+    return fig
+
+
+def format_time(current, total):
+    """Format time display as MM:SS / MM:SS"""
+    def to_mmss(seconds):
+        mins = int(seconds // 60)
+        secs = int(seconds % 60)
+        return f"{mins:02d}:{secs:02d}"
+
+    return f"{to_mmss(current)} / {to_mmss(total)}"
