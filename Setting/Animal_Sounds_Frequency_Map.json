@@ -2,9 +2,9 @@
   "name": "Animal Sounds",
   "sliders": [
     {
-      "id": "slider-dog",
-      "label": "Dog",
-      "icon": "fas fa-dog",
+      "id": "slider-cricket",
+      "label": "Cricket",
+      "icon": "fas fa-cricket",
       "frequency_ranges": [
         [60, 800],
         [1000, 4000]
