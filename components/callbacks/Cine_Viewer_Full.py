@@ -64,7 +64,8 @@ def register_cine_viewer_callbacks(app):
             "Processed Signal",
             duration
         )
-
+        fig_pre.update_traces(line_color='#ffb800')
+        fig_post.update_traces(line_color='#00ff88')
         # Initialize playback state
         playback_state = {
             'is_playing': False,

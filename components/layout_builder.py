@@ -306,8 +306,8 @@ def create_navbar():
         dbc.Container([
             dbc.NavbarBrand([
                 html.I(className="fas fa-waveform-lines me-2"),
-                "SIGNAL EQUALIZER ",
-                html.Span("PRO", className='brand-pro')
+                "Audiora ",
+                html.Span("EQ", className='brand-pro')
             ]),
 
             dbc.Nav([
@@ -700,7 +700,7 @@ def create_slider(slider_config):
                 tooltip={"placement": "right", "always_visible": False},
                 vertical=True,
                 verticalHeight=140,
-                updatemode='drag'
+                updatemode='mouseup'
             )
         ], className='equalizer-slider'),
         

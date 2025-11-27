@@ -70,4 +70,4 @@ if __name__ == '__main__':
     # print("   • Click to seek position")
     # print("\n" + "=" * 70 + "\n")
 
-    app.run(debug=True, port=8050)
+    app.run(debug=False, port=8050)
