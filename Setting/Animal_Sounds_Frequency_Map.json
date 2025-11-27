@@ -4,10 +4,10 @@
     {
       "id": "slider-cricket",
       "label": "Cricket",
-      "icon": "fas fa-cricket",
+      "icon": "fas fa-cricket", 
       "frequency_ranges": [
-        [60, 800],
-        [1000, 4000]
+        [1000, 5900],
+        [6900, 10000]
       ]
     },
     {
