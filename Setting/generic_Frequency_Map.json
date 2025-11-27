@@ -1,17 +1,4 @@
 {
   "name": "Generic",
-  "sliders": [
-    {
-      "id": "generic-29027643",
-      "label": "Band 1",
-      "icon": "fas fa-sliders-h",
-      "frequency_ranges": [
-        [
-          3786.14,
-          10769.97
-        ]
-      ],
-      "gain": 0.0
-    }
-  ]
+  "sliders": []
 }

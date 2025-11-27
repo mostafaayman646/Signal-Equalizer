@@ -1,12 +1,3 @@
-"""
-Enhanced Cine Viewer with Synchronized Playback Cursor
-Features:
-- Full signal display on both graphs
-- Synchronized zooming and panning
-- Moving playback cursor synchronized with audio
-- Audio source selection (before/after)
-"""
-
 import numpy as np
 import plotly.graph_objects as go
 from dash import Input, Output, State, ctx, no_update, html
@@ -91,62 +82,8 @@ def register_cine_viewer_callbacks(app):
 
         return fig_pre, fig_post, playback_state, window_state
 
-    # # ============================================================================
-    # # 2. Synchronized Zoom/Pan (Relayout Events)
-    # # ============================================================================
-    # @app.callback(
-    #     Output('cine-graph-pre', 'figure', allow_duplicate=True),
-    #     Output('cine-graph-post', 'figure', allow_duplicate=True),
-    #     Output('cine-window-state', 'data', allow_duplicate=True),
-    #     Input('cine-graph-pre', 'relayoutData'),
-    #     Input('cine-graph-post', 'relayoutData'),
-    #     State('cine-window-state', 'data'),
-    #     State('cine-graph-pre', 'figure'),
-    #     State('cine-graph-post', 'figure'),
-    #     prevent_initial_call=True
-    # )
-    # def sync_zoom_pan(relayout_pre, relayout_post, window_state, fig_pre, fig_post):
-    #     """Synchronize zoom and pan between both graphs"""
-    #
-    #     if not window_state:
-    #         raise PreventUpdate
-    #
-    #     triggered = ctx.triggered_id
-    #     relayout_data = relayout_pre if triggered == 'cine-graph-pre' else relayout_post
-    #
-    #     if not relayout_data:
-    #         raise PreventUpdate
-    #
-    #     # Check for zoom/pan changes
-    #     if 'xaxis.range[0]' in relayout_data and 'xaxis.range[1]' in relayout_data:
-    #         x_min = relayout_data['xaxis.range[0]']
-    #         x_max = relayout_data['xaxis.range[1]']
-    #
-    #         # Update window state
-    #         window_state['x_range'] = [x_min, x_max]
-    #
-    #         # Update both figures with new x-axis range
-    #         fig_pre['layout']['xaxis']['range'] = [x_min, x_max]
-    #         fig_post['layout']['xaxis']['range'] = [x_min, x_max]
-    #
-    #         return fig_pre, fig_post, window_state
-    #
-    #     # Check for autorange
-    #     if relayout_data.get('xaxis.autorange'):
-    #         duration = window_state.get('total_samples', 1) / window_state.get('sample_rate', 44100)
-    #         window_state['x_range'] = [0, duration]
-    #
-    #         fig_pre['layout']['xaxis']['range'] = [0, duration]
-    #         fig_post['layout']['xaxis']['range'] = [0, duration]
-    #
-    #         return fig_pre, fig_post, window_state
-    #
-    #     raise PreventUpdate
-
-
-
     # ============================================================================
-    # 2. Synchronized Zoom/Pan (Mouse + Buttons)
+    # 2. Synchronized Zoom/Pan
     # ============================================================================
     @app.callback(
         Output('cine-graph-pre', 'figure', allow_duplicate=True),
@@ -239,6 +176,7 @@ def register_cine_viewer_callbacks(app):
             return fig_pre, fig_post, window_state
 
         raise PreventUpdate
+
     # ============================================================================
     # 3. Playback Controls
     # ============================================================================
@@ -288,7 +226,7 @@ def register_cine_viewer_callbacks(app):
         raise PreventUpdate
 
     # ============================================================================
-    # 4. Update Playback Cursor Position (OPTIMIZED)
+    # 4. Update Playback Cursor Position
     # ============================================================================
     @app.callback(
         Output('cine-playback-state', 'data', allow_duplicate=True),
@@ -323,75 +261,9 @@ def register_cine_viewer_callbacks(app):
 
         return playback_state
 
-    # # ============================================================================
-    # # 5. Draw Playback Cursor on Both Graphs (OPTIMIZED)
-    # # ============================================================================
-    # @app.callback(
-    #     Output('cine-graph-pre', 'figure', allow_duplicate=True),
-    #     Output('cine-graph-post', 'figure', allow_duplicate=True),
-    #     Output('cine-current-time', 'children'),
-    #     Input('cine-playback-state', 'data'),
-    #     State('cine-graph-pre', 'figure'),
-    #     State('cine-graph-post', 'figure'),
-    #     prevent_initial_call=True
-    # )
-    # def update_cursor(playback_state, fig_pre, fig_post):
-    #     """Update cursor line on both graphs - OPTIMIZED VERSION"""
-    #
-    #     if not playback_state or not fig_pre or not fig_post:
-    #         raise PreventUpdate
-    #
-    #     cursor_position = playback_state.get('cursor_position', 0.0)
-    #     duration = playback_state.get('duration', 1.0)
-    #
-    #     # Create cursor shape
-    #     cursor_shape = {
-    #         'type': 'line',
-    #         'x0': cursor_position,
-    #         'x1': cursor_position,
-    #         'y0': 0,
-    #         'y1': 1,
-    #         'yref': 'paper',
-    #         'line': {
-    #             'color': '#ff4757',
-    #             'width': 2
-    #         },
-    #         'layer': 'above'
-    #     }
-    #
-    #     # OPTIMIZATION: Use Patch for minimal updates
-    #     from dash import Patch
-    #
-    #     patch_pre = Patch()
-    #     patch_post = Patch()
-    #
-    #     # Initialize shapes list if doesn't exist
-    #     if 'shapes' not in fig_pre.get('layout', {}):
-    #         patch_pre['layout']['shapes'] = []
-    #     if 'shapes' not in fig_post.get('layout', {}):
-    #         patch_post['layout']['shapes'] = []
-    #
-    #     # Remove old cursor (if exists) and add new one
-    #     # Keep only non-cursor shapes
-    #     shapes_pre = [s for s in fig_pre.get('layout', {}).get('shapes', [])
-    #                   if s.get('line', {}).get('color') != '#ff4757']
-    #     shapes_post = [s for s in fig_post.get('layout', {}).get('shapes', [])
-    #                    if s.get('line', {}).get('color') != '#ff4757']
-    #
-    #     # Add new cursor
-    #     shapes_pre.append(cursor_shape)
-    #     shapes_post.append(cursor_shape)
-    #
-    #     patch_pre['layout']['shapes'] = shapes_pre
-    #     patch_post['layout']['shapes'] = shapes_post
-    #
-    #     # Format time display
-    #     time_display = format_time(cursor_position, duration)
-    #
-    #     return patch_pre, patch_post, time_display
-        # ============================================================================
-        # 5. Draw Playback Cursor & Auto-Scroll (OPTIMIZED)
-        # ============================================================================
+    # ============================================================================
+    # 5. Draw Playback Cursor & Auto-Scroll (OPTIMIZED)
+    # ============================================================================
     @app.callback(
         Output('cine-graph-pre', 'figure', allow_duplicate=True),
         Output('cine-graph-post', 'figure', allow_duplicate=True),
@@ -466,7 +338,7 @@ def register_cine_viewer_callbacks(app):
                     updated_window_state = window_state
         # ---------------------------------------------------------
 
-        # 3. Draw Cursor Line (Existing Logic)
+        # 3. Draw Cursor Line
         cursor_shape = {
             'type': 'line',
             'x0': cursor_position, 'x1': cursor_position,
@@ -475,7 +347,7 @@ def register_cine_viewer_callbacks(app):
             'layer': 'above'
         }
 
-        # Initialize shapes list if doesn't exist
+        # Initialize shapes list if it doesn't exist
         if 'shapes' not in fig_pre.get('layout', {}):
             patch_pre['layout']['shapes'] = []
         if 'shapes' not in fig_post.get('layout', {}):
@@ -574,7 +446,7 @@ def register_cine_viewer_callbacks(app):
         from Utils import audio_to_base64_uri
         audio_uri = audio_to_base64_uri(signal, sample_rate, normalize=True)
 
-        # Auto-play if currently playing
+        # Autoplay if currently playing
         auto_play = playback_state and playback_state.get('is_playing', False) if playback_state else False
 
         print(f"[AUDIO SOURCE] Generated audio URI (length: {len(audio_uri)}), autoPlay: {auto_play}")
@@ -660,7 +532,7 @@ def register_cine_viewer_callbacks(app):
             return window.dash_clientside.no_update;
         }
         """,
-        Output('cine-audio-player', 'title'),  # Dummy output
+        Output('cine-audio-player', 'title'),
         Input('cine-playback-state', 'data'),
         Input('cine-speed', 'value'),
         prevent_initial_call=True

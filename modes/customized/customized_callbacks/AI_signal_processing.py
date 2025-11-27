@@ -33,7 +33,7 @@ def _get_fft_module():
         return None
 
 
-def process_ai_output(audio_src, original_data):
+def process_ai_output(audio_src):
     if not audio_src: return no_update, no_update, no_update
 
     try:
@@ -79,7 +79,6 @@ def process_ai_output(audio_src, original_data):
 def register_ai_signal_processing(app):
     """
     Registers TWO SEPARATE callbacks.
-    Uses allow_duplicate=True to prevent Dash errors.
     """
 
     # 1. Callback for the Standard AI Player (Musical Mode)
@@ -88,22 +87,21 @@ def register_ai_signal_processing(app):
         Output('ai-spectrogram', 'figure'),
         Output('ai-frequency-domain', 'figure'),
         Input('ai-audio-player', 'src'),
-        State('signal-data-store', 'data'),
+        # State('signal-data-store', 'data'),
         prevent_initial_call=True
     )
-    def update_musical_ai(audio_src, original_data):
-        return process_ai_output(audio_src, original_data)
+    def update_musical_ai(audio_src):
+        return process_ai_output(audio_src)
 
     # 2. Callback for the Human AI Player (Voice Mode)
-    # NOTICE: allow_duplicate=True is added here
     @app.callback(
         Output('human-ai-processed-signal-store', 'data', allow_duplicate=True),
         Output('ai-spectrogram', 'figure', allow_duplicate=True),
         Output('ai-frequency-domain', 'figure', allow_duplicate=True),
         Input('human-ai-audio-player', 'src'),
-        State('signal-data-store', 'data'),
+        # State('signal-data-store', 'data'),
         prevent_initial_call=True
     )
-    def update_human_ai(audio_src, original_data):
-        return process_ai_output(audio_src, original_data)
+    def update_human_ai(audio_src):
+        return process_ai_output(audio_src)
 

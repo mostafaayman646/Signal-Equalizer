@@ -2,28 +2,17 @@
   "name": "Musical Instruments",
   "sliders": [
     {
-      "id": "slider-guitar",
-      "label": "Guitar",
-      "icon": "fas fa-guitar",
+      "id": "slider-vocals",
+      "label": "Vocals",
+      "icon": "fas fa-microphone-alt",
       "frequency_ranges": [
         [
-          82,
-          1200
+          100,
+          1000
         ],
         [
           2000,
-          4000
-        ]
-      ]
-    },
-    {
-      "id": "slider-piano",
-      "label": "Piano",
-      "icon": "fas fa-piano",
-      "frequency_ranges": [
-        [
-          27,
-          4186
+          12000
         ]
       ]
     },
@@ -33,46 +22,42 @@
       "icon": "fas fa-drum",
       "frequency_ranges": [
         [
-          40,
-          150
+          50,
+          100
         ],
         [
-          200,
-          500
+          150,
+          400
         ],
         [
-          5000,
+          3000,
           10000
-        ]
-      ]
-    },
-    {
-      "id": "slider-violin",
-      "label": "Violin",
-      "icon": "fas fa-music",
-      "frequency_ranges": [
-        [
-          196,
-          3136
-        ],
-        [
-          4000,
-          8000
         ]
       ]
     },
     {
       "id": "slider-bass",
       "label": "Bass",
-      "icon": "fas fa-guitar",
+      "icon": "fas fa-wave-square",
       "frequency_ranges": [
         [
-          41,
-          350
+          40,
+          200
         ],
         [
-          500,
-          1000
+          200,
+          3000
+        ]
+      ]
+    },
+    {
+      "id": "slider-other",
+      "label": "Other",
+      "icon": "fas fa-record-vinyl",
+      "frequency_ranges": [
+        [
+          80,
+          5000
         ]
       ]
     }

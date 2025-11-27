@@ -16,11 +16,12 @@ import numpy as np
 def register_PlayAudio(app):
     @app.callback(
     Output('audio-player-before', 'src'),
-    Input('load-before', 'n_clicks'),
-    State('signal-data-store', 'data'),
+    # Input('load-before', 'n_clicks'),
+    Input('signal-data-store', 'data'),
+    # State('signal-data-store', 'data'),
     prevent_initial_call=True
     )
-    def play_original(n, data):
+    def play_original(data):
         """Play original signal"""
         if not data:
             return no_update
@@ -31,11 +32,12 @@ def register_PlayAudio(app):
 
     @app.callback(
         Output('audio-player-after', 'src'),
-        Input('load-after', 'n_clicks'),
-        State('processed-signal-store', 'data'),
+        # Input('load-after', 'n_clicks'),
+        Input('processed-signal-store', 'data'),
+        # State('processed-signal-store', 'data'),
         prevent_initial_call=True
     )
-    def play_processed(n, data):
+    def play_processed(data):
         """Play processed signal"""
         if not data:
             return no_update

@@ -181,12 +181,25 @@ body {
    Compact Cards - Minimal Padding with Animations
    ============================================================================ */
 
+/*.app-card {*/
+/*    background: var(--card-bg);*/
+/*    border: 1px solid var(--border-color);*/
+/*    border-radius: 10px;*/
+/*    padding: 0.3rem;*/
+/*    margin-bottom: 0.3rem;*/
+/*    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);*/
+/*    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);*/
+/*    animation: cardFadeIn 0.5s ease-out backwards;*/
+/*}*/
 .app-card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 0.3rem;
-    margin-bottom: 0.3rem;
+    /* Reduced radius for a sharper, more compact look */
+    border-radius: 6px;
+    /* Reduced padding drastically (was 0.3rem) */
+    padding: 0.15rem;
+    /* Reduced margin (was 0.3rem) */
+    margin-bottom: 0.2rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: cardFadeIn 0.5s ease-out backwards;
@@ -372,6 +385,9 @@ body {
     width: 100%;
     display: flex;
     justify-content: center;
+    margin-bottom: 25px !important;
+    position: relative;
+    z-index: 10; /* Ensures handle stays on top if they accidentally touch */
 }
 
 /* Dash VERTICAL slider overrides */
@@ -1124,3 +1140,4 @@ body {
     font-size: 1rem;
     font-weight: 600;
 }
+

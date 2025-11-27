@@ -4,7 +4,7 @@ def create_sliders_area():
     """Creates the sliders area for customized modes"""
     # This now gets placed inside the 'app-card' style automatically
     return html.Div([
-        html.H5("EQUALIZER", className="section-heading"),
+        html.H5("EQUALIZER", className="section-heading-compact"),
         html.Div(id='sliders-container', style={
             'display': 'flex',
             'justifyContent': 'space-around',

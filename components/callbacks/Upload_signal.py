@@ -64,8 +64,7 @@ def register_Upload_signal(app):
                 'signal': signal.tolist(),
                 'sample_rate': int(sr),
                 'filename': filename,
-
-                'path':temp_path # Todo
+                'path':temp_path
             }
 
             # OPTIMIZATION: Limit FFT size for frequency plot
@@ -96,8 +95,8 @@ def register_Upload_signal(app):
             f, t, Sxx = spectrogram(signal, sr, fft_module)
             spec_fig = create_spec_figure(f, t, Sxx)
 
-            print(f"✓ Loaded: {filename} ({len(signal)} samples, {sr} Hz)")
-            print(f"✓ FFT computed on {n_fft} samples for frequency plot")
+            # print(f"✓ Loaded: {filename} ({len(signal)} samples, {sr} Hz)")
+            # print(f"✓ FFT computed on {n_fft} samples for frequency plot")
 
             freq_payload = {
                 'frequencies': frequencies,
@@ -105,7 +104,6 @@ def register_Upload_signal(app):
             }
 
             return signal_data, spec_fig, freq_fig, freq_payload
-            # return signal_data,freq_fig
 
         except Exception as e:
             print(f"✗ Error: {e}")
