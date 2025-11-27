@@ -492,7 +492,164 @@ def create_compact_manual_tab():
         # ], className="cine-controls-compact"),
 
 
-                # Row 2: Time Domain Graphs (Side by Side) with Enhanced Controls
+        # # Row 2: Time Domain Graphs (Side by Side) with Enhanced Controls
+        # html.Div([
+        #     # Original Signal
+        #     html.Div([
+        #         html.Div([
+        #             html.Div("ORIGINAL SIGNAL", className="graph-title-compact"),
+        #             html.Span("IN", className="graph-badge-compact"),
+        #         ], className="time-graph-header"),
+        #         dcc.Graph(
+        #             id='cine-graph-pre',
+        #             config={'displayModeBar': False},
+        #             className='time-graph-compact'
+        #         )
+        #     ], className="time-graph-container"),
+        #
+        #     # Processed Signal
+        #     html.Div([
+        #         html.Div([
+        #             html.Div("PROCESSED SIGNAL", className="graph-title-compact"),
+        #             html.Span("OUT", className="graph-badge-compact"),
+        #         ], className="time-graph-header"),
+        #         dcc.Graph(
+        #             id='cine-graph-post',
+        #             config={'displayModeBar': False},
+        #             className='time-graph-compact'
+        #         )
+        #     ], className="time-graph-container"),
+        # ], className="time-domain-compact"),
+        #
+        # # Enhanced Cine Controls with Audio Source Selection
+        # html.Div([
+        #     # Left side: Playback controls
+        #     html.Div([
+        #         dbc.ButtonGroup([
+        #             dbc.Button(
+        #                 html.I(className="fas fa-play"),
+        #                 id='cine-play',
+        #                 color="primary",
+        #                 size="sm",
+        #                 title="Play"
+        #             ),
+        #             dbc.Button(
+        #                 html.I(className="fas fa-pause"),
+        #                 id='cine-pause',
+        #                 color="primary",
+        #                 size="sm",
+        #                 title="Pause"
+        #             ),
+        #             dbc.Button(
+        #                 html.I(className="fas fa-stop"),
+        #                 id='cine-stop',
+        #                 color="primary",
+        #                 size="sm",
+        #                 title="Stop"
+        #             ),
+        #             dbc.Button(
+        #                 html.I(className="fas fa-redo"),
+        #                 id='cine-loop',
+        #                 color="secondary",
+        #                 size="sm",
+        #                 title="Toggle Loop"
+        #             ),
+        #         ], size="sm"),
+        #
+        #         # Time display
+        #         html.Div(
+        #             id='cine-current-time',
+        #             children="00:00 / 00:00",
+        #             style={
+        #                 'fontSize': '0.75rem',
+        #                 'fontWeight': '600',
+        #                 'color': 'var(--accent-cyan)',
+        #                 'marginLeft': '1rem',
+        #                 'fontFamily': 'monospace'
+        #             }
+        #         ),
+        #     ], style={'display': 'flex', 'alignItems': 'center', 'gap': '0.5rem'}),
+        #
+        #     # Middle: Speed control
+        #     html.Div([
+        #         html.Span("Speed", style={
+        #             'fontSize': '0.7rem',
+        #             'marginRight': '0.5rem',
+        #             'color': 'var(--text-secondary)'
+        #         }),
+        #         dcc.Slider(
+        #             id='cine-speed',
+        #             min=0.25,
+        #             max=2.0,
+        #             step=0.25,
+        #             value=1.0,
+        #             marks={0.25: '0.25x', 0.5: '0.5x', 1: '1x', 1.5: '1.5x', 2: '2x'},
+        #             tooltip={"placement": "bottom"},
+        #             className="flex-grow-1"
+        #         )
+        #     ], style={
+        #         'display': 'flex',
+        #         'alignItems': 'center',
+        #         'flex': '1',
+        #         'marginLeft': '1rem',
+        #         'marginRight': '1rem'
+        #     }),
+        #
+        #     # Right side: Audio source selection
+        #     html.Div([
+        #         html.Span("Listen to:", style={
+        #             'fontSize': '0.75rem',
+        #             'marginRight': '0.5rem',
+        #             'color': 'var(--text-primary)',
+        #             'fontWeight': '600'
+        #         }),
+        #         dbc.RadioItems(
+        #             id='cine-audio-source-toggle',
+        #             options=[
+        #                 {'label': ' Original', 'value': 'before'},
+        #                 {'label': ' Processed', 'value': 'after'}
+        #             ],
+        #             value='before',
+        #             inline=True,
+        #             style={'fontSize': '0.75rem'},
+        #             className='cine-audio-toggle'
+        #         ),
+        #     ], style={'display': 'flex', 'alignItems': 'center', 'gap': '0.5rem'}),
+        #
+        # ], className="cine-controls-compact", style={
+        #     'display': 'flex',
+        #     'alignItems': 'center',
+        #     'justifyContent': 'space-between',
+        #     'gap': '1rem',
+        #     'flexWrap': 'wrap'
+        # }),
+        #
+        # # Audio player with track indicator
+        # html.Div([
+        #     html.Div([
+        #         html.I(className="fas fa-volume-up me-2", style={'color': 'var(--accent-cyan)'}),
+        #         html.Span("Playing: ", style={'fontSize': '0.7rem', 'color': 'var(--text-secondary)'}),
+        #         html.Span(id='cine-audio-track-label', children="Original",
+        #                   style={'fontSize': '0.75rem', 'color': 'var(--accent-cyan)', 'fontWeight': '600'})
+        #     ], style={'display': 'flex', 'alignItems': 'center', 'marginBottom': '0.25rem'}),
+        #     html.Audio(
+        #         id='cine-audio-player',
+        #         controls=True,
+        #         autoPlay=False,
+        #         style={
+        #             'width': '100%',
+        #             'height': '35px',
+        #             'backgroundColor': 'var(--secondary-bg)',
+        #             'borderRadius': '6px'
+        #         }
+        #     ),
+        # ], style={'display': 'none','marginTop': '0.5rem'}),
+        #
+        # # Hidden stores for cine viewer
+        # dcc.Store(id='cine-window-state'),
+        # dcc.Store(id='cine-playback-state'),
+        # dcc.Interval(id='cine-ticker', interval=100, disabled=True),  # Updated to 100ms
+        # Row 2: Time Domain Graphs (Side by Side) with Enhanced Controls
         html.Div([
             # Original Signal
             html.Div([
@@ -523,8 +680,9 @@ def create_compact_manual_tab():
 
         # Enhanced Cine Controls with Audio Source Selection
         html.Div([
-            # Left side: Playback controls
+            # Left side: Playback controls AND Zoom Controls
             html.Div([
+                # Playback Group
                 dbc.ButtonGroup([
                     dbc.Button(
                         html.I(className="fas fa-play"),
@@ -554,7 +712,36 @@ def create_compact_manual_tab():
                         size="sm",
                         title="Toggle Loop"
                     ),
+                ], size="sm", className="me-2"),  # Added margin-end to separate from Zoom
+
+                # --- NEW ZOOM CONTROLS ---
+                dbc.ButtonGroup([
+                    dbc.Button(
+                        html.I(className="fas fa-search-plus"),
+                        id='cine-zoom-in',
+                        color="secondary",
+                        outline=True,
+                        size="sm",
+                        title="Zoom In"
+                    ),
+                    dbc.Button(
+                        html.I(className="fas fa-search-minus"),
+                        id='cine-zoom-out',
+                        color="secondary",
+                        outline=True,
+                        size="sm",
+                        title="Zoom Out"
+                    ),
+                    dbc.Button(
+                        html.I(className="fas fa-compress-arrows-alt"),
+                        id='cine-zoom-reset',
+                        color="secondary",
+                        outline=True,
+                        size="sm",
+                        title="Reset View"
+                    ),
                 ], size="sm"),
+                # -------------------------
 
                 # Time display
                 html.Div(
@@ -568,7 +755,7 @@ def create_compact_manual_tab():
                         'fontFamily': 'monospace'
                     }
                 ),
-            ], style={'display': 'flex', 'alignItems': 'center', 'gap': '0.5rem'}),
+            ], style={'display': 'flex', 'alignItems': 'center'}),
 
             # Middle: Speed control
             html.Div([
@@ -643,13 +830,12 @@ def create_compact_manual_tab():
                     'borderRadius': '6px'
                 }
             ),
-        ], style={'marginTop': '0.5rem'}),
+        ], style={'display': 'none', 'marginTop': '0.5rem'}),
 
         # Hidden stores for cine viewer
         dcc.Store(id='cine-window-state'),
         dcc.Store(id='cine-playback-state'),
-        dcc.Interval(id='cine-ticker', interval=100, disabled=True),  # Updated to 100ms
-
+        dcc.Interval(id='cine-ticker', interval=100, disabled=True),
 
 
         # Row 3: Spectrograms (Side by Side) - Toggleable

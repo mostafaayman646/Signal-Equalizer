@@ -82,7 +82,7 @@ def create_ai_tab_content(id_prefix="ai", is_supported=True):
     return html.Div([
         # AI Control Panel
         html.Div([
-            html.Div("AI PROCESSING", className="section-heading"),
+            html.Div("AI PROCESSING", className="section-heading-compact"),
             dbc.Row([
                 dbc.Col([
                     html.Div([
@@ -90,7 +90,7 @@ def create_ai_tab_content(id_prefix="ai", is_supported=True):
                                style={'fontSize': '3rem', 'color': '#b24bf3', 'marginBottom': '1rem'}),
                         html.H5("AI-Powered Separation", style={'marginBottom': '0.5rem'}),
                         html.P("Let AI automatically separate and isolate audio sources",
-                               className="text-secondary", style={'fontSize': '0.9rem'}),
+                               className="text-secondary-compact", style={'fontSize': '0.9rem'}),
                         dbc.Button([
                             html.I(className="fas fa-magic me-2"),
                             "Start AI Separation"
@@ -101,11 +101,11 @@ def create_ai_tab_content(id_prefix="ai", is_supported=True):
 
                 dbc.Col([
                     html.Div([
-                        html.Div("AI SLIDERS", className="section-heading"),
+                        html.Div("AI SLIDERS", className="section-heading-compact"),
                         dcc.Loading(
                             id=f"{id_prefix}-loading-separation",
                             type="default",
-                            children=html.Div(id=f"{id_prefix}-sliders-container", className='sliders-row')
+                            children=html.Div(id=f"{id_prefix}-sliders-container", className='sliders-row-compact')
                         ),
                         html.Div([
                             # Original String ID
@@ -118,14 +118,14 @@ def create_ai_tab_content(id_prefix="ai", is_supported=True):
 
         # AI Analysis Graphs
         html.Div([
-            html.Div("AI ANALYSIS", className="section-heading"),
+            html.Div("AI ANALYSIS", className="section-heading-compact"),
             dbc.Row([
                 # AI Spectrogram
                 dbc.Col([
                     html.Div([
                         html.Div([
-                            html.Div("AI Output Spectrogram", className="graph-title"),
-                            html.Span("AI", className="graph-badge",
+                            html.Div("AI Output Spectrogram", className="graph-title-compact"),
+                            html.Span("AI", className="graph-badge-compact",
                                       style={'background': 'linear-gradient(135deg, #b24bf3, #4a9eff)'}),
                         ], className="graph-header"),
                         dcc.Graph(id='ai-spectrogram', config={'displayModeBar': False},
@@ -137,8 +137,8 @@ def create_ai_tab_content(id_prefix="ai", is_supported=True):
                 dbc.Col([
                     html.Div([
                         html.Div([
-                            html.Div("AI Frequency Domain", className="graph-title"),
-                            html.Span("AI", className="graph-badge",
+                            html.Div("AI Frequency Domain", className="graph-title-compact"),
+                            html.Span("AI", className="graph-badge-compact",
                                       style={'background': 'linear-gradient(135deg, #b24bf3, #4a9eff)'}),
                         ], className="graph-header"),
                         dcc.Graph(id='ai-frequency-domain', config={'displayModeBar': False},
@@ -148,30 +148,30 @@ def create_ai_tab_content(id_prefix="ai", is_supported=True):
             ], className="g-3")
         ], className="app-card"),
 
-        # Comparison Section
-        html.Div([
-            html.Div("COMPARISON: MANUAL vs AI", className="section-heading"),
-            html.P("Compare the performance of manual equalization versus AI separation",
-                   className="text-secondary", style={'fontSize': '0.9rem', 'marginBottom': '1rem'}),
-            dbc.Row([
-                dbc.Col([
-                    html.Div([
-                        html.Div("Manual Mode", className="text-center mb-2",
-                                 style={'color': '#00d9ff', 'fontWeight': 'bold'}),
-                        html.Div("Uses frequency band filtering",
-                                 className="text-center text-secondary", style={'fontSize': '0.8rem'})
-                    ], className="comparison-panel manual")
-                ], width=6),
-                dbc.Col([
-                    html.Div([
-                        html.Div("AI Mode", className="text-center mb-2",
-                                 style={'color': '#b24bf3', 'fontWeight': 'bold'}),
-                        html.Div("Uses deep learning source separation",
-                                 className="text-center text-secondary", style={'fontSize': '0.8rem'})
-                    ], className="comparison-panel ai")
-                ], width=6)
-            ])
-        ], className="app-card"),
+        # # Comparison Section
+        # html.Div([
+        #     html.Div("COMPARISON: MANUAL vs AI", className="section-heading"),
+        #     html.P("Compare the performance of manual equalization versus AI separation",
+        #            className="text-secondary", style={'fontSize': '0.9rem', 'marginBottom': '1rem'}),
+        #     dbc.Row([
+        #         dbc.Col([
+        #             html.Div([
+        #                 html.Div("Manual Mode", className="text-center mb-2",
+        #                          style={'color': '#00d9ff', 'fontWeight': 'bold'}),
+        #                 html.Div("Uses frequency band filtering",
+        #                          className="text-center text-secondary", style={'fontSize': '0.8rem'})
+        #             ], className="comparison-panel manual")
+        #         ], width=6),
+        #         dbc.Col([
+        #             html.Div([
+        #                 html.Div("AI Mode", className="text-center mb-2",
+        #                          style={'color': '#b24bf3', 'fontWeight': 'bold'}),
+        #                 html.Div("Uses deep learning source separation",
+        #                          className="text-center text-secondary", style={'fontSize': '0.8rem'})
+        #             ], className="comparison-panel ai")
+        #         ], width=6)
+        #     ])
+        # ], className="app-card"),
 
         # Hidden stores for AI
         dcc.Store(id=f'{id_prefix}-stems-store'),
