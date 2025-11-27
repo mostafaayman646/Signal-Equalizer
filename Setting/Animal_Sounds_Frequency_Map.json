@@ -2,35 +2,39 @@
   "name": "Animal Sounds",
   "sliders": [
     {
-      "id": "slider-Bird",
-      "label": "Bird",
-      "icon": "fas fa-bird",
-      "frequency_ranges": [
-        [450, 1950]
-      ]
-    },
-    {
-      "id": "slider-Cow",
-      "label": "Cow",
-      "icon": "fas fa-cow",
-      "frequency_ranges": [
-        [256, 3126]
-      ]
-    },
-    {
-      "id": "slider-Dog",
+      "id": "slider-dog",
       "label": "Dog",
       "icon": "fas fa-dog",
       "frequency_ranges": [
-        [219, 1396]
+        [60, 800],
+        [1000, 4000]
       ]
     },
     {
-      "id": "slider-Lion",
-      "label": "Lion",
-      "icon": "fas fa-lion",
+      "id": "slider-bird",
+      "label": "Bird",
+      "icon": "fas fa-dove",
       "frequency_ranges": [
-        [60, 350]
+        [1000, 6000],
+        [7000, 10000]
+      ]
+    },
+    {
+      "id": "slider-frog",
+      "label": "Frog",
+      "icon": "fas fa-frog",
+      "frequency_ranges": [
+        [200, 1500],
+        [1600, 3000]
+      ]
+    },
+    {
+      "id": "slider-owl",
+      "label": "Owl",
+      "icon": "fas fa-feather",
+      "frequency_ranges": [
+        [200, 1500],
+        [1600, 3000]
       ]
     }
   ]
