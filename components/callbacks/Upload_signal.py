@@ -17,12 +17,21 @@ import importlib.util
 from Utils import spectrogram, load_audio
 from components.layouts.freq_fig import create_freq_figure
 from components.layouts.spec_figure_layout import create_spec_figure
+from Utils import fft
 
-pyd_file = os.path.join(current, 'assets', 'build', 'lib.win-amd64-cpython-313', 'fft_module.cp313-win_amd64.pyd')
-spec = importlib.util.spec_from_file_location("fft_module", pyd_file)
-fft_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(fft_module)
+# pyd_file = os.path.join(current, 'assets', 'build', 'lib.win-amd64-cpython-313', 'fft_module.cp313-win_amd64.pyd')
+# spec = importlib.util.spec_from_file_location("fft_module", pyd_file)
+# fft_module = importlib.util.module_from_spec(spec)
+# spec.loader.exec_module(fft_module)
 
+try:
+    import fft_module
+    print("Successfully imported fft_module as a package.")
+
+# 2. If that fails, run the manual loading logic (For Local Windows Dev)
+except ImportError:
+    print("Package import failed. Attempting local Windows manual load...")
+    fft_module = fft()
 
 def register_Upload_signal(app):
     @app.callback(

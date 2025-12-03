@@ -14,7 +14,7 @@ from dash.exceptions import PreventUpdate
 from components.layouts.freq_fig import create_freq_figure
 from components.layouts.spec_figure_layout import create_spec_figure
 from modes.generic.sliders_layout_generic import create_generic_controls_area
-from Utils import spectrogram, audio_to_base64_uri
+from Utils import spectrogram, audio_to_base64_uri, fft
 
 _FFT_MODULE = None
 _DEFAULT_HELPER = "Waiting for clicks…"
@@ -28,29 +28,68 @@ _GENERIC_JSON_PATH = os.path.join(
 )
 _GENERIC_JSON_PATH = os.path.abspath(_GENERIC_JSON_PATH)
 
+#
+# def _get_fft_module():
+#     global _FFT_MODULE
+#     if _FFT_MODULE is not None:
+#         return _FFT_MODULE
+#
+#     try:
+#         module = sys.modules.get("fft_module")
+#         if module is None:
+#             module = importlib.import_module("fft_module")
+#     except ModuleNotFoundError:
+#         current = os.path.abspath(__file__)
+#         while not os.path.exists(os.path.join(current, "assets")):
+#             current = os.path.dirname(current)
+#         pyd_path = os.path.join(current, _PYD_RELATIVE)
+#         spec = importlib.util.spec_from_file_location("fft_module", pyd_path)
+#         module = importlib.util.module_from_spec(spec)
+#         spec.loader.exec_module(module)
+#         sys.modules["fft_module"] = module
+#
+#     _FFT_MODULE = module
+#     return module
+
 
 def _get_fft_module():
     global _FFT_MODULE
+
+    # 1. Check Cache: If we already loaded it, just return it.
     if _FFT_MODULE is not None:
         return _FFT_MODULE
 
     try:
+        # 2. Try Standard Import (For Render/Linux)
+        # This looks for the installed package from 'pip install .'
         module = sys.modules.get("fft_module")
         if module is None:
             module = importlib.import_module("fft_module")
-    except ModuleNotFoundError:
-        current = os.path.abspath(__file__)
-        while not os.path.exists(os.path.join(current, "assets")):
-            current = os.path.dirname(current)
-        pyd_path = os.path.join(current, _PYD_RELATIVE)
-        spec = importlib.util.spec_from_file_location("fft_module", pyd_path)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        sys.modules["fft_module"] = module
 
-    _FFT_MODULE = module
-    return module
+        print("Successfully loaded fft_module via standard import.")
+        _FFT_MODULE = module
+        return module
 
+    except ImportError:
+        # 3. Fallback: Use your custom fft() function (For Local Windows)
+        print("Standard import failed. Calling local fft() function...")
+
+        try:
+            # Call your existing function as requested
+            module = fft()
+
+            # Verify the function actually returned something before caching
+            if module is not None:
+                sys.modules["fft_module"] = module  # Register it globally
+                _FFT_MODULE = module
+                return module
+            else:
+                print("Error: The fft() function returned None.")
+                return None
+
+        except Exception as e:
+            print(f"An error occurred while calling fft(): {e}")
+            return None
 
 def _format_freq(value):
     if value is None:

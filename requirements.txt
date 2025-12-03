@@ -11,3 +11,4 @@ asteroid-filterbanks
 demucs
 setuptools
 gunicorn
+pybind11

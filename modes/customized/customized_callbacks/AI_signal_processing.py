@@ -7,31 +7,63 @@ import importlib.util
 from Utils import spectrogram
 from components.layouts.spec_figure_layout import create_spec_figure
 from components.layouts.freq_fig import create_freq_figure
-
+from Utils import fft
 # Keep the optimization for module loading
 _FFT_MODULE_CACHE = None
 
 
+# def _get_fft_module():
+#     global _FFT_MODULE_CACHE
+#     if _FFT_MODULE_CACHE is not None:
+#         return _FFT_MODULE_CACHE
+#     try:
+#         current = os.path.abspath(__file__)
+#         while not os.path.exists(os.path.join(current, 'assets')):
+#             parent = os.path.dirname(current)
+#             if parent == current: raise FileNotFoundError("Assets not found")
+#             current = parent
+#         pyd_file = os.path.join(current, 'assets', 'build', 'lib.win-amd64-cpython-313',
+#                                 'fft_module.cp313-win_amd64.pyd')
+#         spec = importlib.util.spec_from_file_location("fft_module", pyd_file)
+#         fft_module = importlib.util.module_from_spec(spec)
+#         spec.loader.exec_module(fft_module)
+#         _FFT_MODULE_CACHE = fft_module
+#         return fft_module
+#     except:
+#         return None
 def _get_fft_module():
     global _FFT_MODULE_CACHE
+
+    # 1. Return cached version if it exists
     if _FFT_MODULE_CACHE is not None:
         return _FFT_MODULE_CACHE
-    try:
-        current = os.path.abspath(__file__)
-        while not os.path.exists(os.path.join(current, 'assets')):
-            parent = os.path.dirname(current)
-            if parent == current: raise FileNotFoundError("Assets not found")
-            current = parent
-        pyd_file = os.path.join(current, 'assets', 'build', 'lib.win-amd64-cpython-313',
-                                'fft_module.cp313-win_amd64.pyd')
-        spec = importlib.util.spec_from_file_location("fft_module", pyd_file)
-        fft_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(fft_module)
-        _FFT_MODULE_CACHE = fft_module
-        return fft_module
-    except:
-        return None
 
+    # 2. Try the "Render Way" (Installed via pip)
+    try:
+        import fft_module
+        print("Successfully imported fft_module as a package.")
+
+        # Save to cache so we don't import again next time
+        _FFT_MODULE_CACHE = fft_module
+        return _FFT_MODULE_CACHE
+
+    # 3. If that fails, try the "Local Windows Way" (Your fft() function)
+    except ImportError:
+        print("Package import failed. Attempting local Windows manual load...")
+        try:
+            # Ensure your fft() function returns the module object!
+            loaded_module = fft()
+
+            if loaded_module:
+                _FFT_MODULE_CACHE = loaded_module
+                return _FFT_MODULE_CACHE
+            else:
+                print("Manual load returned None.")
+                return None
+
+        except Exception as e:
+            print(f"Error during manual load: {e}")
+            return None
 
 def process_ai_output(audio_src):
     if not audio_src: return no_update, no_update, no_update

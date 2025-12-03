@@ -2,7 +2,7 @@
 from .spectrogram import spectrogram
 from .load_save_audio import load_audio ,save_audio_as_wav
 from .Base_64_audio_converter import audio_to_base64_uri
-
+from .fft_module import fft
 __all__ = [
     # 'time_to_frequency_linear',
     # 'time_to_frequency_audiogram',
@@ -10,5 +10,6 @@ __all__ = [
     'spectrogram',
     'load_audio',
     'save_audio_as_wav',
-    'audio_to_base64_uri'
+    'audio_to_base64_uri',
+    'fft'
 ]
