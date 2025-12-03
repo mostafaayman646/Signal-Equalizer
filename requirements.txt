@@ -1,17 +1,13 @@
-# Core dashboard stack
-dash
-dash-bootstrap-components
-plotly
-
-# Numerical & signal processing
 numpy
-scipy
+dash-bootstrap-components
+dash
 soundfile
-
-# Deep learning / source separation
+plotly
+scipy
 torch
 torchaudio
 asteroid
 asteroid-filterbanks
 demucs
+setuptools
 gunicorn
